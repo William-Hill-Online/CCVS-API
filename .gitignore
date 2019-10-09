@@ -1,0 +1,12 @@
+*.code-workspace
+
+*.env
+
+*.vscode
+
+.coverage
+
+src/ccvs/static/
+
+__pycache__/
+*.pyc

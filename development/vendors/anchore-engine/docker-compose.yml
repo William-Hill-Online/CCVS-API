@@ -1,0 +1,49 @@
+version: '3.1'
+services:
+  anchore-engine:
+    container_name: anchore_engine
+    image: anchore-app:0.0.6
+    depends_on:
+      - anchore-db
+    ports:
+      - "8228:8228"
+      - "8338:8338"
+    networks:
+      - ccvs_ccvs_net
+    # volumes:
+    #   - ./config/config.yaml:/config/config.yaml
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: 100m
+    environment:
+      - ANCHORE_HOST_ID=dockerhostid-anchore-engine
+      - ANCHORE_ENDPOINT_HOSTNAME=anchore-engine
+      - ANCHORE_DB_NAME=teste2
+      - ANCHORE_DB_HOST=anchoreappdb.cxbnotu7qovw.eu-west-1.rds.amazonaws.com
+      - ANCHORE_DB_USER=anchoreappuser
+      - ANCHORE_DB_PASSWORD=YourPwdShouldBeLongAndSecure!
+      - ANCHORE_DB_PORT=5432
+      - ANCHORE_ENDPOINT_HOSTNAME=localhost
+      - ANCHORE_ENDPOINT_PORT='8228'
+
+  anchore-db:
+    image: "postgres:9"
+    volumes:
+      - postgresql_vol:/var/lib/postgresql/data/pgdata/:z
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - PGDATA=/var/lib/postgresql/data/pgdata/
+    networks:
+      - ccvs_ccvs_net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 100m
+
+volumes:
+  postgresql_vol:
+
+networks:
+  ccvs_ccvs_net:
+    external: true

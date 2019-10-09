@@ -1,0 +1,32 @@
+version: '3'
+services:
+  postgres:
+    container_name: clair_postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    image: postgres:latest
+    networks:
+      - ccvs-scanning-api_ccvs_net
+    restart: unless-stopped
+
+  clair:
+    command: [-config, /config/config.yaml]
+    container_name: clair_clair
+    depends_on:
+      - postgres
+    build:
+    image: quay.io/coreos/clair-git:latest
+
+    networks:
+      - ccvs-scanning-api_ccvs_net
+    ports:
+      - "6060-6061"
+    restart: unless-stopped
+    volumes:
+      - /tmp:/tmp
+      - ./clair_config:/config
+
+
+networks:
+  ccvs-scanning-api_ccvs_net:
+    external: true
