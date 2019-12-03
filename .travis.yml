@@ -1,7 +1,10 @@
-language: bash
+language: python
+python:
+  - "3.6"
 services:
-  - docker
-before_install:
-  - make run-docker
+  - postgresql
+install:
+  - pip install pipenv
+  - pipenv install --dev
 script:
   - pipenv run python src/manage.py test --settings=ccvs.settings.tests
