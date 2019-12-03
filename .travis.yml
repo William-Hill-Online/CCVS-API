@@ -1,0 +1,7 @@
+language: bash
+services:
+  - docker
+before_install:
+  - run-docker
+script:
+  - pipenv run python src/manage.py test --settings=ccvs.settings.tests
