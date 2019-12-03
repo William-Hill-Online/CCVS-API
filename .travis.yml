@@ -7,7 +7,7 @@ install:
   - pip install pipenv
   - pipenv install --dev
 before_script:
-  - psql -c "CREATE DATABASE ccvs;" -U postgres
+  - psql -c "CREATE DATABASE ccvs_test;" -U postgres
   - psql -c "CREATE USER ccvsuser WITH PASSWORD 'ccvspwd';" -U postgres
 script:
   - pipenv run python src/manage.py test --settings=ccvs.settings.tests
