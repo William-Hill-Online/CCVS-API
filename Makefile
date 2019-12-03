@@ -30,8 +30,8 @@ makemigrations: ## Run django makemigrations
 all: clean install tests run ## Run clean, install, tests, run
 
 tests-docker: ## Run tests inside docker
-	docker-compose --file docker-compose-tests.yml up
+	docker-compose --file docker-compose-tests.yml up --build
 	docker-compose --file docker-compose-tests.yml down -v
 
 run-docker: ## Run docker
-	docker-compose --file docker-compose.yml up -d
+	docker-compose --file docker-compose.yml up -d --build

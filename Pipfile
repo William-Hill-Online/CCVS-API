@@ -5,22 +5,22 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "==2.2.2"
-django-debug-toolbar = "==1.11"
+django-debug-toolbar = "==2.1"
 pre-commit = "==1.14.4"
 django-nose = "==1.4.6"
 coverage = "==4.5.2"
 pycodestyle = "==2.5.0"
 ipdb = "==0.11"
-django-pdb = "*"
+django-pdb = "==0.6.2"
 
 [packages]
-djangorestframework = "==3.9.1"
-django = "==2.1.13"
+djangorestframework = "==3.10.3"
+django = "==3.0"
 python-decouple = "==3.1"
 coreapi = "==2.3.3"
 anchorecli = "==0.3.3"
 django-rest-swagger = "==2.2.0"
-drf-yasg = {extras = ["validation"],version = "==1.13.0"}
+drf-yasg = {extras = ["validation"],version = "==1.17.0"}
 psycopg2 = "==2.7.7"
 paclair = "==3.2.0"
 pyaml = "==18.11.0"
