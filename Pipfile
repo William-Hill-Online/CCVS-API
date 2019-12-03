@@ -4,13 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pylint = "==2.2.2"
+pylint = "==2.4.4"
 django-debug-toolbar = "==2.1"
 pre-commit = "==1.14.4"
 django-nose = "==1.4.6"
-coverage = "==4.5.2"
+coverage = "==4.5.4"
 pycodestyle = "==2.5.0"
-ipdb = "==0.11"
+ipdb = "==0.12.3"
 django-pdb = "==0.6.2"
 
 [packages]
@@ -21,7 +21,7 @@ coreapi = "==2.3.3"
 anchorecli = "==0.3.3"
 django-rest-swagger = "==2.2.0"
 drf-yasg = {extras = ["validation"],version = "==1.17.0"}
-psycopg2 = "==2.7.7"
+psycopg2 = "==2.8.4"
 paclair = "==3.2.0"
 pyaml = "==18.11.0"
 uwsgi = "==2.0.18"
