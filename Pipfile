@@ -16,7 +16,7 @@ django-pdb = "==0.6.2"
 [packages]
 djangorestframework = "==3.10.3"
 django = "==3.0"
-python-decouple = "==3.1"
+python-decouple = "==3.3"
 coreapi = "==2.3.3"
 anchorecli = "==0.3.3"
 django-rest-swagger = "==2.2.0"
