@@ -6,8 +6,6 @@ DEBUG = True
 
 ROOT_URLCONF = 'ccvs.urls.development'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -18,8 +16,6 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
     }
 }
-
-ALLOWED_HOSTS = ['localhost']
 
 LOGGING = {
     'version': 1,

@@ -22,6 +22,24 @@ services:
         volumes:
             - ".:/app"
 
+    worker:
+        build:
+            context: ./
+            dockerfile: development/Dockerfile
+        container_name: ccvs_worker
+        command: run-celery
+        depends_on:
+            - postgres
+        env_file:
+            - docker.env
+        external_links:
+            - anchore_engine
+            - clair_clair
+        networks:
+            - ccvs_net
+        volumes:
+            - ".:/app"
+
     postgres:
         container_name: ccvs_pgdb
         environment:
@@ -32,7 +50,7 @@ services:
         networks:
             - ccvs_net
         ports:
-            - "5432"
+            - "5432:5432"
         restart: always
         volumes:
             - "postgres_vol:/var/lib/postgresql/data/"

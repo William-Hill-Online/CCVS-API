@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('vendor_image_internal_id', models.CharField(max_length=200)),
                 ('image', models.ForeignKey(
                     on_delete=django.db.models.deletion.CASCADE,
-                    to='container_scannning.Image')),
+                    to='container_scanning.Image')),
             ],
         ),
         migrations.CreateModel(
@@ -59,13 +59,13 @@ class Migration(migrations.Migration):
             name='vendor',
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
-                to='container_scannning.Vendor'),
+                to='container_scanning.Vendor'),
         ),
         migrations.AddField(
             model_name='image',
             name='vendors',
             field=models.ManyToManyField(
-                through='container_scannning.ImageVendor',
-                to='container_scannning.Vendor'),
+                through='container_scanning.ImageVendor',
+                to='container_scanning.Vendor'),
         ),
     ]

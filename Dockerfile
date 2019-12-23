@@ -34,4 +34,8 @@ COPY ./docker-entrypoint.sh /
 COPY ./ccvs_nginx.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/ccvs_nginx.conf /etc/nginx/sites-enabled
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+
+
+USER ccvs:ccvs
+
 ENTRYPOINT ["/docker-entrypoint.sh"]

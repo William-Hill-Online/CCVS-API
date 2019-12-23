@@ -3,9 +3,10 @@ import logging
 import tempfile
 
 import pyaml
-from container_scannning import exceptions
+from container_scanning import exceptions
 from paclair.handler import PaClair
 from rest_framework import status
+
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ def get_vuln(image_vendor_obj):
         obj = paclair_object._plugins['Docker'].clair.get_ancestry(
             image_vendor_obj.vendor_image_internal_id)
     except Exception as err:
-        print(err)
+        logger.error(err)
         raise exceptions.VendorException(
             err, status.HTTP_400_BAD_REQUEST)
     else:

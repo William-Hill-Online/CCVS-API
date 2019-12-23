@@ -5,7 +5,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('container_scannning', '0003_auto_20190312_1557'),
+        ('container_scanning', '0003_auto_20190312_1557'),
     ]
 
     operations = [

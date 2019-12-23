@@ -18,7 +18,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
 
-    path('container-scanning/', include('container_scannning.urls')),
+    path('container-scanning/', include('container_scanning.urls')),
     # DOCS
     url(r'^swagger(?P<format>\.json|\.yaml)$',
         schema_view.without_ui(cache_timeout=0),

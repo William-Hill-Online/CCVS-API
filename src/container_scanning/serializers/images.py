@@ -1,5 +1,5 @@
-from container_scannning.models import Image
-from container_scannning.models import ImageVendor
+from container_scanning.models import Image
+from container_scanning.models import ImageVendor
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.validators import UniqueValidator

@@ -1,0 +1,34 @@
+[{
+    "name": "anchore_engine",
+    "credentials": {
+  "user": "admin",
+	"pass":"foobar",
+	"api-version":"0.4.0",
+  "ssl_verify": false,
+  "url":"http://anchore_engine"
+  }
+  },
+  {
+    "name": "clair",
+    "credentials":
+  {
+	"General": {
+		"clair_url": "http://clair_clair",
+		"clair_api_version": 3
+	},
+	"Plugins": {
+		"Docker": {
+			"class": "paclair.plugins.docker_plugin.DockerPlugin",
+			"registries": {
+				"docker-registry.prod.williamhill.plc": {
+					"auth": [
+						"svcccvsappsec",
+						"AppSec2019"
+					],
+					"verify": false
+				}
+			}
+		}
+	}
+}}
+]

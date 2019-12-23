@@ -8,13 +8,15 @@ SECRET_KEY = config('SECRET_KEY')
 
 INSTALLED_APPS = [
     'core.apps.CoreConfig',
-    'container_scannning.apps.ContainerScannningConfig',
+    'container_scanning.apps.ContainerScannningConfig',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_celery_results',
 
     'rest_framework',
     'drf_yasg',
@@ -88,3 +90,5 @@ SWAGGER_SETTINGS = {
 }
 
 JWKS_ENDPOINT = os.getenv('JWKS_ENDPOINT')
+
+CELERY_RESULT_BACKEND = 'django-db'

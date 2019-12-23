@@ -3,7 +3,7 @@ from django.urls import path
 from .views import images
 from .views import vendors
 
-app_name = 'container_scannning'
+app_name = 'container_scanning'
 
 urlpatterns = [
     path('vendors/', vendors.VendorsView.as_view(), name='vendor-list'),

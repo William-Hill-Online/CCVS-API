@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from container_scannning.models import Vendor
+from container_scanning.models import Vendor
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 class VendorsTests(APITestCase):
     permission = MagicMock(return_value=True)
     patch_has_permission = patch(
-        'container_scannning.views.vendors.JWTAPIPermission.has_permission',
+        'container_scanning.views.vendors.JWTAPIPermission.has_permission',
         permission
     )
 
@@ -18,7 +18,7 @@ class VendorsTests(APITestCase):
     def test_create_vendor(self):
         """Ensure we can create a new vendor object."""
 
-        url = reverse('container_scannning:vendor-list')
+        url = reverse('container_scanning:vendor-list')
         data = {
             'name': 'VendorExample',
             'credentials': {
@@ -41,7 +41,7 @@ class VendorsTests(APITestCase):
     def test_list_one_vendor(self):
         """Ensure we can list one vendor objects."""
 
-        url = reverse('container_scannning:vendor-list')
+        url = reverse('container_scanning:vendor-list')
         Vendor.objects.create(**{
             'name': 'VendorExample2',
             'credentials': {
@@ -64,7 +64,7 @@ class VendorsTests(APITestCase):
     @patch_has_permission
     def test_list_two_vendor(self):
         """Ensure we can list two vendor objects."""
-        url = reverse('container_scannning:vendor-list')
+        url = reverse('container_scanning:vendor-list')
         Vendor.objects.create(**{
             'name': 'VendorExample2',
             'credentials': {
@@ -101,7 +101,7 @@ class VendorsTests(APITestCase):
     @patch_has_permission
     def test_search_vendor(self):
         """Ensure we can search one vendor object."""
-        url = reverse('container_scannning:vendor-list')
+        url = reverse('container_scanning:vendor-list')
         url += '?name=VendorExample3'
         Vendor.objects.create(**{
             'name': 'VendorExample2',
@@ -134,7 +134,7 @@ class VendorsTests(APITestCase):
     @patch_has_permission
     def test_search_empty_vendor(self):
         """Ensure will return 0 object with no match in search."""
-        url = reverse('container_scannning:vendor-list')
+        url = reverse('container_scanning:vendor-list')
         url += '?name=VendorExample4'
         Vendor.objects.create(**{
             'name': 'VendorExample2',
@@ -163,7 +163,7 @@ class VendorsTests(APITestCase):
 class VendorTests(APITestCase):
     permission = MagicMock(return_value=True)
     patch_has_permission = patch(
-        'container_scannning.views.vendors.JWTAPIPermission.has_permission',
+        'container_scanning.views.vendors.JWTAPIPermission.has_permission',
         permission
     )
 
@@ -177,7 +177,7 @@ class VendorTests(APITestCase):
                 'pass': 'password2',
             }
         })
-        url = reverse('container_scannning:vendor',
+        url = reverse('container_scanning:vendor',
                       kwargs={'vendor_id': vendor.id})
         self.client.force_authenticate(None)
         response = self.client.get(url, format='json')
@@ -201,7 +201,7 @@ class VendorTests(APITestCase):
                 'pass': 'password2',
             }
         })
-        url = reverse('container_scannning:vendor',
+        url = reverse('container_scanning:vendor',
                       kwargs={'vendor_id': vendor.id})
         data = {
             'name': 'VendorExample1',
@@ -232,7 +232,7 @@ class VendorTests(APITestCase):
                 'pass': 'password2',
             }
         })
-        url = reverse('container_scannning:vendor',
+        url = reverse('container_scanning:vendor',
                       kwargs={'vendor_id': vendor.id})
         self.client.force_authenticate(None)
         response = self.client.delete(url, format='json')

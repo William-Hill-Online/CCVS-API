@@ -32,6 +32,9 @@ repos:
         'flake8-quotes',
         'flake8-string-format',
         'flake8-tidy-imports',
+        'flake8-print',
+        'flake8-debugger',
+        'flake8-todo',
         ]
   - repo: https://github.com/pre-commit/pre-commit
     sha: v1.14.4

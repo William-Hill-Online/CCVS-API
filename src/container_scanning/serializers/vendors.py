@@ -1,4 +1,4 @@
-from container_scannning.models import Vendor
+from container_scanning.models import Vendor
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 

@@ -1,9 +1,12 @@
-from container_scannning import exceptions
-from container_scannning.models import Image
-from container_scannning.models import ImageVendor
-from container_scannning.models import Vendor
-from container_scannning.serializers import images as szrl_images
-from container_scannning.vendors import initialize
+import logging
+
+from container_scanning import exceptions
+from container_scanning.models import Image
+from container_scanning.models import ImageVendor
+from container_scanning.models import Vendor
+from container_scanning.serializers import images as szrl_images
+from container_scanning.tasks import add_scan
+from container_scanning.vendors import initialize
 from core.permissions import JWTAPIPermission
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -17,6 +20,8 @@ name_param = openapi.Parameter(
     'name', in_=openapi.IN_QUERY, description='Name of the image',
     type=openapi.TYPE_STRING
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ImagesView(APIView):
@@ -97,7 +102,7 @@ class ImageVendorView(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_201_CREATED: szrl_images.ImageVendorSerializer
+            status.HTTP_202_ACCEPTED: szrl_images.ImageVendorSerializer
         },
     )
     def post(self, request, image_id, vendor_id):
@@ -108,27 +113,22 @@ class ImageVendorView(APIView):
             'vendor': vendor_id
         }
         serializer = szrl_images.ImageVendorSerializer(data=data, partial=True)
-
         if serializer.is_valid(raise_exception=True):
-
             try:
-                vendor_facade = initialize.initialize(vendor.name)
-                img_id = vendor_facade.add_image(
-                    vendor.credentials,
-                    tag=image.name
+                add_scan.delay(image_id, vendor_id)
+            except Exception as err:
+                logger.error(
+                    'Error creating scan, image %s and vendor %s. Reason: %s',
+                    image, vendor, err
                 )
-            except Exception:
                 raise exceptions.VendorException(
                     'Error accessing external API',
                     status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
             else:
-                data['image_vendor_id'] = img_id
-                serializer = szrl_images.ImageVendorSerializer(data=data)
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
+                serializer.save()
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response(serializer.data, status.HTTP_202_ACCEPTED)
 
 
 class ImageVendorVulnView(APIView):

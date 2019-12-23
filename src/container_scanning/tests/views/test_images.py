@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from container_scannning.models import Image
-from container_scannning.serializers import images
-from container_scannning.serializers import vendors
+from container_scanning.models import Image
+from container_scanning.serializers import images
+from container_scanning.serializers import vendors
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 permission = MagicMock(return_value=True)
 patch_has_permission = patch(
-    'container_scannning.views.images.JWTAPIPermission.has_permission',
+    'container_scanning.views.images.JWTAPIPermission.has_permission',
     permission
 )
 
@@ -29,7 +29,7 @@ class ImagesTests(APITestCase):
     @patch_has_permission
     def test_create_image(self):
         """Ensure we can create a new image object."""
-        url = reverse('container_scannning:image-list')
+        url = reverse('container_scanning:image-list')
         data = {'name': 'ImageExample'}
         response = self.client.post(url, data, format='json')
 
@@ -42,7 +42,7 @@ class ImagesTests(APITestCase):
         """Ensure we can list one image objects."""
 
         self.create_image_deps('ImageExample')
-        url = reverse('container_scannning:image-list')
+        url = reverse('container_scanning:image-list')
         response = self.client.get(url, format='json')
         data = response.json()
 
@@ -55,7 +55,7 @@ class ImagesTests(APITestCase):
         """Ensure we can list two image objects."""
         self.create_image_deps('ImageExample1')
         self.create_image_deps('ImageExample2')
-        url = reverse('container_scannning:image-list')
+        url = reverse('container_scanning:image-list')
         response = self.client.get(url, format='json')
         data = response.json()
 
@@ -67,7 +67,7 @@ class ImagesTests(APITestCase):
     @patch_has_permission
     def test_search_image(self):
         """Ensure we can search one image object."""
-        url = reverse('container_scannning:image-list')
+        url = reverse('container_scanning:image-list')
         url += '?name=ImageExample2'
         self.create_image_deps('ImageExample1')
         self.create_image_deps('ImageExample2')
@@ -85,7 +85,7 @@ class ImagesTests(APITestCase):
     @patch_has_permission
     def test_search_empty_image(self):
         """Ensure will return 0 object with no match in search."""
-        url = reverse('container_scannning:image-list')
+        url = reverse('container_scanning:image-list')
         url += '?name=ImageExample5'
         self.create_image_deps('ImageExample1')
         self.create_image_deps('ImageExample2')
@@ -117,7 +117,7 @@ class ImageTests(APITestCase):
         image = self.create_image_deps('ImageExample')
 
         url = reverse(
-            'container_scannning:image',
+            'container_scanning:image',
             kwargs={
                 'image_id': image.id,
             }
@@ -154,7 +154,7 @@ class ImageVendorView(APITestCase):
         return vendor.instance
 
     @patch_has_permission
-    @patch('container_scannning.vendors.clair.facade.add_image')
+    @patch('container_scanning.vendors.clair.facade.add_image')
     def test_post_image_clair(self, mock_add_image):
         """Ensure we can create a scan in clair."""
 
@@ -162,7 +162,7 @@ class ImageVendorView(APITestCase):
         vendor = self.create_vendor_deps('clair')
 
         url = reverse(
-            'container_scannning:image-vendor',
+            'container_scanning:image-vendor',
             kwargs={
                 'image_id': image.id,
                 'vendor_id': vendor.id
@@ -182,14 +182,14 @@ class ImageVendorView(APITestCase):
             {'pass': 'password2', 'user': 'user2'}, tag='ImageExample1')
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.add_image')
+    @patch('container_scanning.vendors.anchore_engine.facade.add_image')
     def test_post_image_anchore_engine(self, mock_add_image):
         """Ensure we can create a scan in anchore_engine."""
         image = self.create_image_deps()
         vendor = self.create_vendor_deps('anchore_engine')
 
         url = reverse(
-            'container_scannning:image-vendor',
+            'container_scanning:image-vendor',
             kwargs={
                 'image_id': image.id,
                 'vendor_id': vendor.id
@@ -224,7 +224,7 @@ class ImageVendorView(APITestCase):
         image_vendor.save()
 
         url = reverse(
-            'container_scannning:image-vendor',
+            'container_scanning:image-vendor',
             kwargs={
                 'image_id': image.id,
                 'vendor_id': vendor.id
@@ -264,7 +264,7 @@ class ImageVendorVulnView(APITestCase):
         return vendor.instance
 
     @patch_has_permission
-    @patch('container_scannning.vendors.clair.facade.get_vuln')
+    @patch('container_scanning.vendors.clair.facade.get_vuln')
     def test_get_vuln_clair(self, mock_get_vuln):
         """Ensure we can get vuln from clair."""
 
@@ -281,7 +281,7 @@ class ImageVendorVulnView(APITestCase):
         image_vendor.save()
 
         url = reverse(
-            'container_scannning:image-vendor-vuln',
+            'container_scanning:image-vendor-vuln',
             kwargs={
                 'image_id': image.id,
                 'vendor_id': vendor.id
@@ -295,7 +295,7 @@ class ImageVendorVulnView(APITestCase):
         self.assertEqual(data, {'data': [1, 2, 3]})
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.get_vuln')
+    @patch('container_scanning.vendors.anchore_engine.facade.get_vuln')
     def test_get_vuln_anchore_engine(self, mock_get_vuln):
         """Ensure we can get vuln from anchore."""
         mock_get_vuln.return_value = {'data': [1, 2, 3]}
@@ -311,7 +311,7 @@ class ImageVendorVulnView(APITestCase):
         image_vendor.save()
 
         url = reverse(
-            'container_scannning:image-vendor-vuln',
+            'container_scanning:image-vendor-vuln',
             kwargs={
                 'image_id': image.id,
                 'vendor_id': vendor.id

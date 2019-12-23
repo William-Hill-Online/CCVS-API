@@ -1,5 +1,5 @@
-from container_scannning.models import Vendor
-from container_scannning.serializers import vendors as srlz_vendors
+from container_scanning.models import Vendor
+from container_scanning.serializers import vendors as srlz_vendors
 from core.permissions import JWTAPIPermission
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema

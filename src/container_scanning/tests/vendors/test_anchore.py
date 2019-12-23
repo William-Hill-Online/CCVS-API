@@ -1,14 +1,14 @@
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from container_scannning.serializers import images
-from container_scannning.serializers import vendors
-from container_scannning.vendors.anchore_engine import facade
+from container_scanning.serializers import images
+from container_scanning.serializers import vendors
+from container_scanning.vendors.anchore_engine import facade
 from rest_framework.test import APITestCase
 
 permission = MagicMock(return_value=True)
 patch_has_permission = patch(
-    'container_scannning.views.images.JWTAPIPermission.has_permission',
+    'container_scanning.views.images.JWTAPIPermission.has_permission',
     permission
 )
 
@@ -61,7 +61,7 @@ class AnchoreTest(APITestCase):
         return vendor.instance
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_get_image(self, mock_anchore):
         """Ensures that we test get_image function without exceptions."""
         mock_anchore.get_image.return_value = {
@@ -72,7 +72,7 @@ class AnchoreTest(APITestCase):
             self.get_image_config, image_id=self.image_id)
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_get_image(self, mock_anchore):
         """Ensures that we test get_image function with exceptions."""
         mock_anchore.get_image.return_value = {
@@ -83,7 +83,7 @@ class AnchoreTest(APITestCase):
             facade.get_image(self.image_vendor)
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_add_image(self, mock_anchore):
         """Ensures that we test add_image function without exceptions."""
         mock_anchore.add_image.return_value = {
@@ -93,7 +93,7 @@ class AnchoreTest(APITestCase):
         mock_anchore.add_image.call_args(self.config, tag=self.tag)
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_add_image(self, mock_anchore):
         """Ensures that we test add_image function with exceptions."""
         mock_anchore.add_image.return_value = {
@@ -104,7 +104,7 @@ class AnchoreTest(APITestCase):
             facade.add_image(self.config, self.tag)
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_get_vuln(self, mock_anchore):
         """Ensures that we test get_vuln function without exceptions."""
         mock_anchore.query_image.return_value = {
@@ -117,7 +117,7 @@ class AnchoreTest(APITestCase):
             query_group='vuln', query_type='all', vendor_only=True)
 
     @patch_has_permission
-    @patch('container_scannning.vendors.anchore_engine.facade.apiexternal')
+    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_get_vuln(self, mock_anchore):
         """Ensures that we test get_vuln function with exceptions."""
         mock_anchore.query_image.return_value = {

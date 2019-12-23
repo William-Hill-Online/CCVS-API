@@ -1,5 +1,5 @@
 from anchorecli.clients import apiexternal
-from container_scannning import exceptions
+from container_scanning import exceptions
 from rest_framework import status
 
 
