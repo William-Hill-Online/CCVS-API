@@ -18,7 +18,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'drf_yasg',
-    'rest_framework_swagger',
+
+    'health_check',
+    'health_check.db',
 ]
 
 MIDDLEWARE = [
@@ -72,9 +74,8 @@ SWAGGER_SETTINGS = {
     'SUPPORTED_SUBMIT_METHODS': [
         'get',
         'post',
-        'patch',
+        'put',
         'delete',
-        'update',
     ],
     'SECURITY_DEFINITIONS': {
         'api_key': {

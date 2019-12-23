@@ -1,16 +1,10 @@
 import os
 
-from .base import *
+from .base import *  # noqa
 
 DEBUG = True
 
-INSTALLED_APPS += [
-    'debug_toolbar',
-]
-
 ROOT_URLCONF = 'ccvs.urls.development'
-
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -44,5 +38,9 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
         },
+        'django.utils.autoreload': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
     },
 }

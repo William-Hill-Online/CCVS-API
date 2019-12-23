@@ -2,8 +2,6 @@ import os
 
 from .base import *  # noqa
 
-DEBUG = True
-
 ROOT_URLCONF = 'ccvs.urls.production'
 
 DATABASES = {
@@ -20,3 +18,5 @@ DATABASES = {
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # noqa
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
