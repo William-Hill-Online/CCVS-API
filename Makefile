@@ -36,6 +36,5 @@ tests-docker: ## Run tests inside docker
 run-docker: ## Run docker
 	docker-compose --file docker-compose.yml up -d --build
 
-run-celery:
-	@cd src
-	@DJANGO_SETTINGS_MODULE=ccvs.settings.development celery -A src/ccvs worker -l info
+run-celery: ## Run celery
+	cd src; DJANGO_SETTINGS_MODULE=ccvs.settings.development celery -A ccvs worker -l info

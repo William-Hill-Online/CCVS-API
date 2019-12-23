@@ -27,7 +27,7 @@ services:
             context: ./
             dockerfile: development/Dockerfile
         container_name: ccvs_worker
-        command: run-celery
+        command: make run-celery
         depends_on:
             - postgres
         env_file:
