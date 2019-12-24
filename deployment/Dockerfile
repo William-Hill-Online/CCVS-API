@@ -30,8 +30,8 @@ WORKDIR $DOCKYARD_SRVPROJ
 RUN pipenv install
 
 # Copy entrypoint script into the image
-COPY ./docker-entrypoint.sh /
-COPY ./ccvs_nginx.conf /etc/nginx/sites-available/
+COPY ./deployment/docker-entrypoint.sh /
+COPY ./deployment/ccvs_nginx.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/ccvs_nginx.conf /etc/nginx/sites-enabled
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 

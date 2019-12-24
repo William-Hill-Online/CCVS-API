@@ -3,8 +3,8 @@ services:
 
     api:
         build:
-            context: ./
-            dockerfile: development/Dockerfile
+            context: ../
+            dockerfile: ./development/Dockerfile
         container_name: ccvs_api
         command: make run
         depends_on:
@@ -20,12 +20,12 @@ services:
             - "8000:8000"
             - "8001:8001"
         volumes:
-            - ".:/app"
+            - "../:/app"
 
     worker:
         build:
-            context: ./
-            dockerfile: development/Dockerfile
+            context: ../
+            dockerfile: ./development/Dockerfile
         container_name: ccvs_worker
         command: make run-celery
         depends_on:
@@ -38,7 +38,7 @@ services:
         networks:
             - ccvs_net
         volumes:
-            - ".:/app"
+            - "../:/app"
 
     postgres:
         container_name: ccvs_pgdb
