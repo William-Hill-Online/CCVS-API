@@ -154,37 +154,11 @@ class ImageVendorView(APITestCase):
         return vendor.instance
 
     @patch_has_permission
-    @patch('container_scanning.vendors.clair.facade.add_image')
-    def test_post_image_clair(self, mock_add_image):
-        """Ensure we can create a scan in clair."""
+    @patch('container_scanning.views.images.add_scan')
+    def test_post_image_anchore_engine(self, add_scan):
+        """Ensure we can create a scan job."""
+        add_scan.delay.return_value.id = 'jobid_123'
 
-        image = self.create_image_deps()
-        vendor = self.create_vendor_deps('clair')
-
-        url = reverse(
-            'container_scanning:image-vendor',
-            kwargs={
-                'image_id': image.id,
-                'vendor_id': vendor.id
-            }
-        )
-        mock_add_image.return_value = 'name123'
-
-        response = self.client.post(url, format='json')
-        data = response.json()
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(data['vendor'], str(vendor.id))
-        self.assertEqual(data['image'], str(image.id))
-        self.assertEqual(data['image_vendor_id'], 'name123')
-
-        mock_add_image.call_args(
-            {'pass': 'password2', 'user': 'user2'}, tag='ImageExample1')
-
-    @patch_has_permission
-    @patch('container_scanning.vendors.anchore_engine.facade.add_image')
-    def test_post_image_anchore_engine(self, mock_add_image):
-        """Ensure we can create a scan in anchore_engine."""
         image = self.create_image_deps()
         vendor = self.create_vendor_deps('anchore_engine')
 
@@ -195,18 +169,61 @@ class ImageVendorView(APITestCase):
                 'vendor_id': vendor.id
             }
         )
-        mock_add_image.return_value = 'name123'
 
         response = self.client.post(url, format='json')
         data = response.json()
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertEqual(data['vendor'], str(vendor.id))
         self.assertEqual(data['image'], str(image.id))
-        self.assertEqual(data['image_vendor_id'], 'name123')
+        self.assertEqual(data['image_vendor_id'], '')
+        self.assertEqual(data['job_id'], 'jobid_123')
 
-        mock_add_image.call_args(
-            {'pass': 'password2', 'user': 'user2'}, tag='ImageExample1')
+        add_scan.delay.assert_called_with(image.id, vendor.id)
+
+        add_scan.reset_mock()  # Reset the mock object
+
+        add_scan.delay.assert_not_called()
+
+    @patch_has_permission
+    @patch('container_scanning.views.images.add_scan')
+    def test_put_image_anchore_engine(self, add_scan):
+        """Ensure we can create(update) a scan job."""
+        add_scan.delay.return_value.id = 'jobid_234'
+
+        image = self.create_image_deps()
+        vendor = self.create_vendor_deps('anchore_engine')
+
+        image_vendor = images.ImageVendorSerializer(data={
+            'vendor': vendor.id,
+            'image': image.id,
+            'image_vendor_id': 'name234'
+        })
+        image_vendor.is_valid()
+        image_vendor.save()
+
+        url = reverse(
+            'container_scanning:image-vendor',
+            kwargs={
+                'image_id': image.id,
+                'vendor_id': vendor.id
+            }
+        )
+
+        response = self.client.put(url, format='json')
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(data['vendor'], str(vendor.id))
+        self.assertEqual(data['image'], str(image.id))
+        self.assertEqual(data['image_vendor_id'], 'name234')
+        self.assertEqual(data['job_id'], 'jobid_234')
+
+        add_scan.delay.assert_called_with(image.id, vendor.id, force=True)
+
+        add_scan.reset_mock()  # Reset the mock object
+
+        add_scan.delay.assert_not_called()
 
     @patch_has_permission
     def test_get_image_anchore_engine(self):

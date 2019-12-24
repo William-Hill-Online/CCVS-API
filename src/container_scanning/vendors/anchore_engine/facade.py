@@ -14,8 +14,8 @@ def get_image(image_vendor_obj):
     return image_vendor['payload']
 
 
-def add_image(config, tag):
-    image_vendor = apiexternal.add_image(config, tag=tag)
+def add_image(config, tag, force=False):
+    image_vendor = apiexternal.add_image(config, tag=tag, force=force)
     if image_vendor['success'] is False:
         raise exceptions.VendorException(
             image_vendor['error'], status.HTTP_400_BAD_REQUEST)

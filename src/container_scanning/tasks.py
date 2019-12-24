@@ -5,8 +5,8 @@ from container_scanning.vendors import initialize
 from rest_framework.generics import get_object_or_404
 
 
-@task(name='container_scanning.tasks.add')
-def add_scan(image_id, vendor_id):
+@task(name='container_scanning.tasks.add_scan')
+def add_scan(image_id, vendor_id, force=False):
     try:
         image_vendor_obj = get_object_or_404(
             ImageVendor,
@@ -18,7 +18,8 @@ def add_scan(image_id, vendor_id):
         vendor_facade = initialize.initialize(image_vendor_obj.vendor.name)
         img_id = vendor_facade.add_image(
             image_vendor_obj.vendor.credentials,
-            tag=image_vendor_obj.image.name
+            tag=image_vendor_obj.image.name,
+            force=force
         )
     except Exception as err:
         raise Exception(err)

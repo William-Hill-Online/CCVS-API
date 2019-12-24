@@ -37,3 +37,28 @@ class ImageVendorSerializer(serializers.ModelSerializer):
                 message='Image by vendor must be unique.'
             )
         ]
+
+
+class ImageVendorJobSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    image_vendor_id = serializers.CharField(
+        max_length=200,
+        source='vendor_image_internal_id',
+    )
+    job_id = serializers.SerializerMethodField('set_job_id')
+
+    def set_job_id(self, objects):
+        return self.context.get('job_id')
+
+    class Meta:
+        model = ImageVendor
+        fields = ('id', 'vendor', 'image', 'image_vendor_id', 'job_id')
+        read_only_fields = ('id',)
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ImageVendor.objects.all(),
+                fields=('image', 'vendor'),
+                message='Image by vendor must be unique.'
+            )
+        ]

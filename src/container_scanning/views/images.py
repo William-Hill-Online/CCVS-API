@@ -87,6 +87,7 @@ class ImageVendorView(APIView):
     required_scopes = {
         'GET': ['container-scanning/images.read'],
         'POST': ['container-scanning/images.create'],
+        'PUT': ['container-scanning/images.create'],
     }
 
     @swagger_auto_schema(
@@ -102,7 +103,7 @@ class ImageVendorView(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_202_ACCEPTED: szrl_images.ImageVendorSerializer
+            status.HTTP_202_ACCEPTED: szrl_images.ImageVendorJobSerializer
         },
     )
     def post(self, request, image_id, vendor_id):
@@ -112,21 +113,49 @@ class ImageVendorView(APIView):
             'image': image_id,
             'vendor': vendor_id
         }
-        serializer = szrl_images.ImageVendorSerializer(data=data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            try:
-                add_scan.delay(image_id, vendor_id)
-            except Exception as err:
-                logger.error(
-                    'Error creating scan, image %s and vendor %s. Reason: %s',
-                    image, vendor, err
-                )
-                raise exceptions.VendorException(
-                    'Error accessing external API',
-                    status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            else:
+        try:
+            job_id = add_scan.delay(image_id, vendor_id)
+        except Exception as err:
+            logger.error(
+                'Error creating scan, image %s and vendor %s. Reason: %s',
+                image, vendor, err
+            )
+            raise exceptions.VendorException(
+                'Error accessing external API',
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        else:
+            context = {'job_id': job_id.id}
+            serializer = szrl_images.ImageVendorJobSerializer(
+                data=data, partial=True, context=context)
+            if serializer.is_valid(raise_exception=True):
                 serializer.save()
+
+        return Response(serializer.data, status.HTTP_202_ACCEPTED)
+
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_202_ACCEPTED: szrl_images.ImageVendorJobSerializer
+        },
+    )
+    def put(self, request, image_id, vendor_id):
+        image_vendor_obj = get_object_or_404(
+            ImageVendor, image_id=image_id, vendor_id=vendor_id)
+        try:
+            job_id = add_scan.delay(image_id, vendor_id, force=True)
+        except Exception as err:
+            logger.error(
+                'Error updating scan, image %s and vendor %s. Reason: %s',
+                image_vendor_obj.image, image_vendor_obj.vendor, err
+            )
+            raise exceptions.VendorException(
+                'Error accessing external API',
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        else:
+            context = {'job_id': job_id.id}
+            serializer = szrl_images.ImageVendorJobSerializer(
+                image_vendor_obj, context=context)
 
         return Response(serializer.data, status.HTTP_202_ACCEPTED)
 

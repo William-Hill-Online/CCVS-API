@@ -29,12 +29,11 @@ makemigrations: ## Run django makemigrations
 
 all: clean install tests run ## Run clean, install, tests, run
 
-tests-docker: ## Run tests inside docker
-	docker-compose --file docker-compose-tests.yml up --build
-	docker-compose --file docker-compose-tests.yml down -v
+tests-docker: run-docker ## Run tests inside docker
+	docker exec ccvs_api make tests
 
 run-docker: ## Run docker
-	docker-compose --file docker-compose.yml up -d --build
+	docker-compose --file docker-compose.yml up -d
 
 run-celery: ## Run celery
-	cd src; DJANGO_SETTINGS_MODULE=ccvs.settings.development celery -A ccvs worker -l info
+	cd src; DJANGO_SETTINGS_MODULE=ccvs.settings.development pipenv run celery -A ccvs worker -l info
