@@ -3,17 +3,6 @@ from container_scanning import exceptions
 from rest_framework import status
 
 
-def get_image(image_vendor_obj):
-    config = image_vendor_obj.vendor.credentials
-    image_id = image_vendor_obj.vendor_image_internal_id
-    image_vendor = apiexternal.get_image(config, image_id=image_id)
-
-    if image_vendor['success'] is False:
-        raise exceptions.VendorException(
-            image_vendor['error'], status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return image_vendor['payload']
-
-
 def add_image(config, tag):
     image_vendor = apiexternal.add_image(config, tag=tag, force=True)
     if image_vendor['success'] is False:
