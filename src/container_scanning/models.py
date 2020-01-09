@@ -30,3 +30,36 @@ class ImageVendor(models.Model):
 
     class Meta:
         unique_together = (('vendor', 'image'))
+
+
+class Job(models.Model):
+
+    # currently, available types of job are:
+    TYPES = (
+        ('scan_image', 'scan_image'),
+    )
+
+    # list of statuses that job can have
+    STATUSES = (
+        ('pending', 'pending'),
+        ('started', 'started'),
+        ('finished', 'finished'),
+        ('failed', 'failed'),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    type = models.CharField(choices=TYPES, max_length=20)
+    status = models.CharField(
+        choices=STATUSES, max_length=20, default=STATUSES[0][0])
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data = JSONField()
+    result = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        super(Job, self).save(*args, **kwargs)
+        if self.status == 'pending':
+            from .tasks import TASK_MAPPING
+            task = TASK_MAPPING[self.type]
+            task.delay(job_id=self.id, data=self.data)
