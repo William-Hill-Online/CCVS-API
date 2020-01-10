@@ -2,7 +2,7 @@ from functools import wraps
 
 from celery.decorators import task
 from container_scanning.models import Vendor
-from container_scanning.vendors import initialize
+from container_scanning.vendors.initialize import initialize
 
 from .models import Job
 
@@ -12,7 +12,6 @@ def update_job(fn):
 
     @wraps(fn)
     def wrapper(job_id, *args, **kwargs):
-
         job = Job.objects.get(id=job_id)
         job.status = 'started'
         job.save()
@@ -31,11 +30,14 @@ def update_job(fn):
 
 def scan_image_vendor(image_tag, vendor):
     try:
-        vendor_facade = initialize.initialize(vendor.name)
-        image_id = vendor_facade.add_image(
-            vendor.credentials, tag=image_tag)
-        image_vendor = vendor_facade.get_vuln(
-            vendor.credentials, image_id=image_id)
+        vendor_facade = initialize(vendor.name)
+        if vendor_facade:
+            image_id = vendor_facade.add_image(
+                vendor.credentials, tag=image_tag)
+            image_vendor = vendor_facade.get_vuln(
+                vendor.credentials, image_id=image_id)
+        else:
+            raise Exception('Vendor not initialized')
     except Exception as err:
         raise Exception(err)
     else:
@@ -57,7 +59,6 @@ def scan_image_vendors(image_tag):
 @task(name='container_scanning.tasks.scan_image')
 @update_job
 def scan_image(data):
-
     image_tag = data.get('image')
     if not image_tag:
         raise Exception('Image was not sending')

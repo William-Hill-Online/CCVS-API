@@ -2,10 +2,10 @@ from unittest.mock import patch
 
 from container_scanning.serializers import vendors
 from container_scanning.vendors.anchore_engine import facade
-from rest_framework.test import APITestCase
+from django.test.testcases import TestCase
 
 
-class AnchoreTest(APITestCase):
+class AnchoreTest(TestCase):
 
     def setUp(self):
         """setup variables for tests usage."""

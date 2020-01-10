@@ -15,7 +15,7 @@ clean: ## Clear *.pyc files, etc
 
 tests: install ## Run tests
 	echo "Running tests"
-	@pipenv run python src/manage.py test --settings=ccvs.settings.tests --keepdb
+	@pipenv run coverage run src/manage.py test --settings=ccvs.settings.tests --keepdb
 
 migrate: install ## Run django migrate
 	echo "Running django migrate"

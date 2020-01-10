@@ -4,11 +4,11 @@ from unittest.mock import patch
 from container_scanning import exceptions
 from container_scanning.serializers import vendors
 from container_scanning.vendors.clair import facade
+from django.test.testcases import TestCase
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 
-class ClairTest(APITestCase):
+class ClairTest(TestCase):
 
     def setUp(self):
         """setup variables for tests usage."""
