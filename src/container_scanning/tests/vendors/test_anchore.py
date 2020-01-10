@@ -1,19 +1,11 @@
-from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from container_scanning.serializers import images
 from container_scanning.serializers import vendors
 from container_scanning.vendors.anchore_engine import facade
-from rest_framework.test import APITestCase
-
-permission = MagicMock(return_value=True)
-patch_has_permission = patch(
-    'container_scanning.views.images.JWTAPIPermission.has_permission',
-    permission
-)
+from django.test.testcases import TestCase
 
 
-class AnchoreTest(APITestCase):
+class AnchoreTest(TestCase):
 
     def setUp(self):
         """setup variables for tests usage."""
@@ -23,29 +15,6 @@ class AnchoreTest(APITestCase):
 
         # Serialized vendor configured for anchore
         self.vendor = self.create_vendor_deps('anchore')
-
-        # Serialized image configured for anchore
-        self.image = self.create_image_deps()
-
-        # Images image_vendor object configured for anchore
-        self.image_vendor = images.ImageVendor.objects.create(
-            vendor=self.vendor,
-            image=self.image,
-            vendor_image_internal_id='name123'
-        )
-        self.image_vendor.save()
-
-        self.get_image_config = self.image_vendor.vendor.credentials
-        self.image_id = self.image_vendor.vendor_image_internal_id
-
-    def create_image_deps(self):
-        image = images.ImageSerializer(data={
-            'name': 'ImageExample1'
-        })
-        image.is_valid()
-        image.save()
-
-        return image.instance
 
     def create_vendor_deps(self, name):
         vendor = vendors.VendorSerializer(data={
@@ -60,29 +29,6 @@ class AnchoreTest(APITestCase):
 
         return vendor.instance
 
-    @patch_has_permission
-    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
-    def test_get_image(self, mock_anchore):
-        """Ensures that we test get_image function without exceptions."""
-        mock_anchore.get_image.return_value = {
-            'success': True, 'payload': 'venderId'}
-
-        self.assertEqual(facade.get_image(self.image_vendor), 'venderId')
-        mock_anchore.get_image.call_args(
-            self.get_image_config, image_id=self.image_id)
-
-    @patch_has_permission
-    @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
-    def test_fail_get_image(self, mock_anchore):
-        """Ensures that we test get_image function with exceptions."""
-        mock_anchore.get_image.return_value = {
-            'success': False, 'payload': 'venderId'}
-
-        # Checking if was raised any exception
-        with self.assertRaises(Exception):
-            facade.get_image(self.image_vendor)
-
-    @patch_has_permission
     @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_add_image(self, mock_anchore):
         """Ensures that we test add_image function without exceptions."""
@@ -92,7 +38,6 @@ class AnchoreTest(APITestCase):
         self.assertEqual(facade.add_image(self.config, self.tag), 'venderId')
         mock_anchore.add_image.call_args(self.config, tag=self.tag)
 
-    @patch_has_permission
     @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_add_image(self, mock_anchore):
         """Ensures that we test add_image function with exceptions."""
@@ -103,26 +48,34 @@ class AnchoreTest(APITestCase):
         with self.assertRaises(Exception):
             facade.add_image(self.config, self.tag)
 
-    @patch_has_permission
     @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
-    def test_get_vuln(self, mock_anchore):
+    def test_get_vuln_success(self, mock_anchore):
         """Ensures that we test get_vuln function without exceptions."""
-        mock_anchore.query_image.return_value = {
-            'success': True, 'payload': 'name123'}
 
-        self.assertEqual(facade.get_vuln(self.image_vendor), 'name123')
+        result_vuln = {
+            'success': True, 'httpcode': 200,
+            'payload': {
+                'imageDigest': 'sha256:test',
+                'vulnerabilities': [],
+                'vulnerability_type': 'all'
+            }, 'error': {}}
+
+        mock_anchore.query_image.return_value = result_vuln
+
+        self.assertEqual(facade.get_vuln(
+            self.config, 'sha256:test'), result_vuln['payload'])
 
         mock_anchore.query_image.call_args(
-            self.vendor.credentials, imageDigest='name123',
-            query_group='vuln', query_type='all', vendor_only=True)
+            self.config,  imageDigest='sha256:test', query_group='vuln',
+            query_type='all', vendor_only=True
+        )
 
-    @patch_has_permission
     @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_get_vuln(self, mock_anchore):
         """Ensures that we test get_vuln function with exceptions."""
         mock_anchore.query_image.return_value = {
-            'success': False, 'payload': 'name123'}
+            'success': False, 'payload': 'error'}
 
         # Checking if was raised any exception
         with self.assertRaises(Exception):
-            facade.get_vuln(self.image_vendor)
+            facade.get_vuln(self.config, 'sha256:test')

@@ -24,7 +24,7 @@ COVER_PERC = os.getenv('COVER_PERC', '75')  # noqa: F405
 
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=container_scanning,core',
-    '--cover-erase',
+    '--cover-package=container_scanning',
     '--cover-min-percentage='+COVER_PERC,
+    '--verbosity=2',
 ]
