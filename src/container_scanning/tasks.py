@@ -67,8 +67,3 @@ def scan_image(data):
         results[result[0]] = result[1]
 
     return results
-
-
-TASK_MAPPING = {
-    'scan_image': scan_image,
-}

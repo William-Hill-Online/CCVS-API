@@ -18,8 +18,7 @@ class TasksTest(TestCase):
             ('clair', {'result': 'clair_result'}),
         ]
         job = Job.objects.create(
-            data={'image': 'image_tag'},
-            type='scan_image'
+            data={'image': 'image_tag'}
         )
 
         scan_image(job_id=job.id, data={'image': 'image_tag'})
@@ -60,8 +59,6 @@ class TasksTest(TestCase):
     def test_scan_image_vendors_success(self, scan_image_vendor):
         """Ensure we can create a scan in all vendors."""
 
-        from nose.tools import set_trace
-        set_trace()
         vendor1 = Vendor.objects.create(**{
             'name': 'VendorExample1',
             'credentials': {
