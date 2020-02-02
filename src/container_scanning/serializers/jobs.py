@@ -7,6 +7,17 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ('id', 'status', 'created_at',
-                  'updated_at', 'data', 'result',)
-        read_only_fields = ('status', 'created_at', 'updated_at', 'result',)
+        fields = (
+            'id',
+            'status',
+            'created_at',
+            'updated_at',
+            'data',
+            'result',
+        )
+        read_only_fields = (
+            'status',
+            'created_at',
+            'updated_at',
+            'result',
+        )

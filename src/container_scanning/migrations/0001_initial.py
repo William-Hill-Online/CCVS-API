@@ -11,47 +11,61 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Image',
             fields=[
-                ('id', models.UUIDField(
-                    default=uuid.uuid4,
-                    editable=False,
-                    primary_key=True,
-                    serialize=False)),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
                 ('name', models.CharField(max_length=100, unique=True)),
             ],
         ),
         migrations.CreateModel(
             name='ImageVendor',
             fields=[
-                ('id', models.UUIDField(
-                    default=uuid.uuid4,
-                    editable=False,
-                    primary_key=True,
-                    serialize=False)),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
                 ('vendor_image_internal_id', models.CharField(max_length=200)),
-                ('image', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE,
-                    to='container_scanning.Image')),
+                (
+                    'image',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='container_scanning.Image',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Vendor',
             fields=[
-                ('id', models.UUIDField(
-                    default=uuid.uuid4,
-                    editable=False,
-                    primary_key=True,
-                    serialize=False)),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
                 ('name', models.CharField(max_length=100, unique=True)),
                 ('url', models.CharField(max_length=200)),
-                ('credentials',
-                 django.contrib.postgres.fields.jsonb.JSONField()),
+                ('credentials', django.contrib.postgres.fields.jsonb.JSONField()),
             ],
         ),
         migrations.AddField(
@@ -59,13 +73,14 @@ class Migration(migrations.Migration):
             name='vendor',
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
-                to='container_scanning.Vendor'),
+                to='container_scanning.Vendor',
+            ),
         ),
         migrations.AddField(
             model_name='image',
             name='vendors',
             field=models.ManyToManyField(
-                through='container_scanning.ImageVendor',
-                to='container_scanning.Vendor'),
+                through='container_scanning.ImageVendor', to='container_scanning.Vendor'
+            ),
         ),
     ]

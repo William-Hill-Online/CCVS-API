@@ -9,7 +9,6 @@ from rest_framework import status
 
 
 class ClairTest(TestCase):
-
     def setUp(self):
         """setup variables for tests usage."""
 
@@ -20,13 +19,9 @@ class ClairTest(TestCase):
         self.vendor = self.create_vendor_deps('clair')
 
     def create_vendor_deps(self, name):
-        vendor = vendors.VendorSerializer(data={
-            'name': name,
-            'credentials': {
-                'user': 'user2',
-                'pass': 'password2'
-            }
-        })
+        vendor = vendors.VendorSerializer(
+            data={'name': name, 'credentials': {'user': 'user2', 'pass': 'password2'}}
+        )
         vendor.is_valid()
         vendor.save()
 
@@ -66,13 +61,15 @@ class ClairTest(TestCase):
         # Moking paclair plugins with docker mock
         mock_paclair.return_value._plugins = {'Docker': mock_docker}
 
-        self.assertEqual(facade.get_vuln(
-            self.config, 'sha256:test'), {'name': 'Image123'})
+        self.assertEqual(
+            facade.get_vuln(self.config, 'sha256:test'), {'name': 'Image123'}
+        )
 
         # Checking if the values of the paclair push and analise mock are
         # correct
-        mock_paclair.return_value._plugins['Docker'].clair\
-            .get_ancestry.assert_called_with('sha256:test')
+        mock_paclair.return_value._plugins[
+            'Docker'
+        ].clair.get_ancestry.assert_called_with('sha256:test')
 
     @patch('container_scanning.vendors.clair.facade.PaClair')
     def test_fail_get_vuln(self, mock_paclair):

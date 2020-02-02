@@ -5,14 +5,11 @@ from rest_framework.test import APITestCase
 
 
 class JobsTests(APITestCase):
-
     def test_create_job(self):
         """Ensure we can create a new job object."""
 
         url = reverse('container_scanning:jobs')
-        data = {
-            'data': {'image': 'image_test'}
-        }
+        data = {'data': {'image': 'image_test'}}
         response = self.client.post(url, data, format='json')
 
         # Testing if the post works
@@ -24,16 +21,11 @@ class JobsTests(APITestCase):
 
 
 class JobTests(APITestCase):
-
     def test_get_vendor_pending(self):
         """Ensure we can get a job with status pending."""
 
-        job = Job.objects.create(**{
-            'status': 'pending',
-            'data': {'key': 'value'}
-        })
-        url = reverse('container_scanning:job',
-                      kwargs={'job_id': job.id})
+        job = Job.objects.create(**{'status': 'pending', 'data': {'key': 'value'}})
+        url = reverse('container_scanning:job', kwargs={'job_id': job.id})
         response = self.client.get(url, format='json')
         data = response.json()
 
@@ -45,13 +37,14 @@ class JobTests(APITestCase):
     def test_get_vendor_success(self):
         """Ensure we can get a job with status success."""
 
-        job = Job.objects.create(**{
-            'status': 'success',
-            'data': {'key': 'value'},
-            'result': {'key2': 'value2'}
-        })
-        url = reverse('container_scanning:job',
-                      kwargs={'job_id': job.id})
+        job = Job.objects.create(
+            **{
+                'status': 'success',
+                'data': {'key': 'value'},
+                'result': {'key2': 'value2'},
+            }
+        )
+        url = reverse('container_scanning:job', kwargs={'job_id': job.id})
         response = self.client.get(url, format='json')
         data = response.json()
 

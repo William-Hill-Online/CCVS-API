@@ -10,20 +10,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 name_param = openapi.Parameter(
-    'name', in_=openapi.IN_QUERY, description='Name of the image',
-    type=openapi.TYPE_STRING
+    'name',
+    in_=openapi.IN_QUERY,
+    description='Name of the image',
+    type=openapi.TYPE_STRING,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class JobView(APIView):
-
-    @swagger_auto_schema(
-        responses={
-            status.HTTP_202_ACCEPTED: szrl_jobs.JobSerializer
-        }
-    )
+    @swagger_auto_schema(responses={status.HTTP_202_ACCEPTED: szrl_jobs.JobSerializer})
     def get(self, request, job_id):
         job_obj = get_object_or_404(Job, id=job_id)
         serializer = szrl_jobs.JobSerializer(job_obj)
@@ -32,10 +29,8 @@ class JobView(APIView):
 
 class JobsView(APIView):
     @swagger_auto_schema(
-        responses={
-            status.HTTP_202_ACCEPTED: szrl_jobs.JobSerializer
-        },
-        request_body=szrl_jobs.JobSerializer
+        responses={status.HTTP_202_ACCEPTED: szrl_jobs.JobSerializer},
+        request_body=szrl_jobs.JobSerializer,
     )
     def post(self, request):
         payload = request.data

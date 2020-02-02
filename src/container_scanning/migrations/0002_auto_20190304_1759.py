@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='imagevendor',
-            unique_together={('vendor', 'image')},
+            name='imagevendor', unique_together={('vendor', 'image')},
         ),
     ]

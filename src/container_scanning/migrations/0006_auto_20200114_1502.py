@@ -9,26 +9,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='imagevendor',
-            unique_together=None,
-        ),
-        migrations.RemoveField(
-            model_name='imagevendor',
-            name='image',
-        ),
-        migrations.RemoveField(
-            model_name='imagevendor',
-            name='vendor',
-        ),
-        migrations.RemoveField(
-            model_name='job',
-            name='type',
-        ),
-        migrations.DeleteModel(
-            name='Image',
-        ),
-        migrations.DeleteModel(
-            name='ImageVendor',
-        ),
+        migrations.AlterUniqueTogether(name='imagevendor', unique_together=None,),
+        migrations.RemoveField(model_name='imagevendor', name='image',),
+        migrations.RemoveField(model_name='imagevendor', name='vendor',),
+        migrations.RemoveField(model_name='job', name='type',),
+        migrations.DeleteModel(name='Image',),
+        migrations.DeleteModel(name='ImageVendor',),
     ]

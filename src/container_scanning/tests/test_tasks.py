@@ -9,7 +9,6 @@ from django.test.testcases import TestCase
 
 
 class TasksTest(TestCase):
-
     @patch('container_scanning.tasks.scan_image_vendors')
     def test_scan_image_success(self, scan_image_vendors):
         """Ensure we can create a scan."""
@@ -17,41 +16,42 @@ class TasksTest(TestCase):
             ('anchore', {'result': 'anchore_result'}),
             ('clair', {'result': 'clair_result'}),
         ]
-        job = Job.objects.create(
-            data={'image': 'image_tag'}
-        )
+        job = Job.objects.create(data={'image': 'image_tag'})
 
         scan_image(job_id=job.id, data={'image': 'image_tag'})
 
         job_finished = Job.objects.get(id=job.id)
         scan_image_vendors.assert_called_with('image_tag')
-        self.assertDictEqual(job_finished.result, {
-            'clair': {'result': 'clair_result'},
-            'anchore': {'result': 'anchore_result'}})
+        self.assertDictEqual(
+            job_finished.result,
+            {
+                'clair': {'result': 'clair_result'},
+                'anchore': {'result': 'anchore_result'},
+            },
+        )
 
     @patch('container_scanning.tasks.initialize')
     def test_scan_image_vendor_success(self, initialize):
         """Ensure we can create a scan by vendor."""
         initialize = initialize.return_value
-        vendor = Vendor(**{
-            'name': 'VendorExample',
-            'credentials': {
-                'user': 'user',
-                'pass': 'password'
+        vendor = Vendor(
+            **{
+                'name': 'VendorExample',
+                'credentials': {'user': 'user', 'pass': 'password'},
             }
-        })
+        )
 
         initialize.add_image.return_value = 'image_id'
         initialize.get_vuln.return_value = {'key': 'value'}
 
         result = scan_image_vendor('image_tag', vendor)
 
-        initialize.add_image.assert_called_with({
-            'user': 'user',
-            'pass': 'password'}, tag='image_tag')
-        initialize.get_vuln.assert_called_with({
-            'user': 'user',
-            'pass': 'password'}, image_id='image_id')
+        initialize.add_image.assert_called_with(
+            {'user': 'user', 'pass': 'password'}, tag='image_tag'
+        )
+        initialize.get_vuln.assert_called_with(
+            {'user': 'user', 'pass': 'password'}, image_id='image_id'
+        )
 
         self.assertDictEqual(result, {'key': 'value'})
 
@@ -59,19 +59,19 @@ class TasksTest(TestCase):
     def test_scan_image_vendors_success(self, scan_image_vendor):
         """Ensure we can create a scan in all vendors."""
 
-        vendor1 = Vendor.objects.create(**{
-            'name': 'VendorExample1',
-            'credentials': {
-                'user': 'user1',
-                'pass': 'password1'
-            }})
+        vendor1 = Vendor.objects.create(
+            **{
+                'name': 'VendorExample1',
+                'credentials': {'user': 'user1', 'pass': 'password1'},
+            }
+        )
 
-        vendor2 = Vendor.objects.create(**{
-            'name': 'VendorExample2',
-            'credentials': {
-                'user': 'user2',
-                'pass': 'password2'
-            }})
+        vendor2 = Vendor.objects.create(
+            **{
+                'name': 'VendorExample2',
+                'credentials': {'user': 'user2', 'pass': 'password2'},
+            }
+        )
 
         scan_image_vendor.side_effect = ['result1', 'result2']
 

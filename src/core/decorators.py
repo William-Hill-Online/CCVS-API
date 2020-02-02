@@ -16,8 +16,8 @@ def retry(exceptions, tries=4, delay=3, backoff=2, logger=None):
             each retry).
         logger: Logger to use. If None, print.
     """
-    def deco_retry(f):
 
+    def deco_retry(f):
         @wraps(f)
         def f_retry(*args, **kwargs):
             mtries, mdelay = tries, delay

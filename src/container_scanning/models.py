@@ -24,8 +24,7 @@ class Job(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(
-        choices=STATUSES, max_length=20, default=STATUSES[0][0])
+    status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,4 +35,5 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
         if self.status == 'pending':
             from .tasks import scan_image
+
             scan_image.delay(job_id=self.id, data=self.data)

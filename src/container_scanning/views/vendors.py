@@ -8,10 +8,11 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
 name_param = openapi.Parameter(
-    'name', in_=openapi.IN_QUERY, description='Name of the vendor',
-    type=openapi.TYPE_STRING
+    'name',
+    in_=openapi.IN_QUERY,
+    description='Name of the vendor',
+    type=openapi.TYPE_STRING,
 )
 
 
@@ -24,27 +25,22 @@ class VendorView(APIView):
         'DELETE': ['container-scanning/vendors.delete'],
     }
 
-    @swagger_auto_schema(
-        responses={
-            status.HTTP_200_OK: srlz_vendors.VendorSerializer
-        }
-    )
+    @swagger_auto_schema(responses={status.HTTP_200_OK: srlz_vendors.VendorSerializer})
     def get(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
         serializer = srlz_vendors.VendorSerializer(vendor)
         return Response(serializer.data, status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        responses={
-            status.HTTP_200_OK: srlz_vendors.VendorSerializer
-        },
-        request_body=srlz_vendors.VendorSerializer
+        responses={status.HTTP_200_OK: srlz_vendors.VendorSerializer},
+        request_body=srlz_vendors.VendorSerializer,
     )
     def put(self, request, vendor_id):
         saved_vendor = get_object_or_404(Vendor, pk=vendor_id)
         data = request.data
         serializer = srlz_vendors.VendorSerializer(
-            instance=saved_vendor, data=data, partial=True)
+            instance=saved_vendor, data=data, partial=True
+        )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
@@ -64,10 +60,8 @@ class VendorsView(APIView):
     }
 
     @swagger_auto_schema(
-        responses={
-            status.HTTP_200_OK: srlz_vendors.VendorSerializer(many=True)
-        },
-        manual_parameters=[name_param]
+        responses={status.HTTP_200_OK: srlz_vendors.VendorSerializer(many=True)},
+        manual_parameters=[name_param],
     )
     def get(self, request):
         if request.query_params.get('name'):
@@ -79,10 +73,8 @@ class VendorsView(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        responses={
-            status.HTTP_201_CREATED: srlz_vendors.VendorSerializer
-        },
-        request_body=srlz_vendors.VendorSerializer
+        responses={status.HTTP_201_CREATED: srlz_vendors.VendorSerializer},
+        request_body=srlz_vendors.VendorSerializer,
     )
     def post(self, request):
         vendor = request.data
