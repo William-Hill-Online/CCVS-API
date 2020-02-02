@@ -1,7 +1,6 @@
 from django.urls import path
 
-from .views import jobs
-from .views import vendors
+from .views import jobs, vendors
 
 app_name = 'container_scanning'
 

@@ -1,10 +1,7 @@
 from unittest.mock import patch
 
-from container_scanning.models import Job
-from container_scanning.models import Vendor
-from container_scanning.tasks import scan_image
-from container_scanning.tasks import scan_image_vendor
-from container_scanning.tasks import scan_image_vendors
+from container_scanning.models import Job, Vendor
+from container_scanning.tasks import scan_image, scan_image_vendor, scan_image_vendors
 from django.test.testcases import TestCase
 
 

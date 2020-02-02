@@ -36,8 +36,7 @@
 #     SOFTWARE.
 import logging
 
-from core.jwt.validator import TokenError
-from core.jwt.validator import TokenValidator
+from core.jwt.validator import TokenError, TokenValidator
 from django.conf import settings
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
