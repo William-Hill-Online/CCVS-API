@@ -2,6 +2,8 @@ import os
 
 from .base import *  # noqa
 
+DEBUG = os.getenv('DEBUG', False)
+
 ROOT_URLCONF = 'ccvs.urls.production'
 
 DATABASES = {
@@ -14,7 +16,3 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
     }
 }
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -22,6 +22,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'allow_cidr.middleware.AllowCIDRMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -86,3 +87,8 @@ SWAGGER_SETTINGS = {
 JWKS_ENDPOINT = os.getenv('JWKS_ENDPOINT')
 
 CELERY_RESULT_BACKEND = 'django-db'
+
+
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', '127.0.0.1')]
+
+ALLOWED_CIDR_NETS = os.environ.get('ALLOWED_CIDR_NETS', '').split(',')
