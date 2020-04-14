@@ -7,12 +7,7 @@ from rest_framework.test import APITestCase
 
 
 class VendorsTests(APITestCase):
-    permission = MagicMock(return_value=True)
-    patch_has_permission = patch(
-        'container_scanning.views.vendors.JWTAPIPermission.has_permission', permission
-    )
 
-    @patch_has_permission
     def test_create_vendor(self):
         """Ensure we can create a new vendor object."""
 
@@ -31,7 +26,6 @@ class VendorsTests(APITestCase):
             Vendor.objects.get().credentials, {'user': 'user1', 'pass': 'password1'}
         )
 
-    @patch_has_permission
     def test_list_one_vendor(self):
         """Ensure we can list one vendor objects."""
 
@@ -51,7 +45,6 @@ class VendorsTests(APITestCase):
         self.assertEqual(data[0]['name'], 'VendorExample2')
         self.assertEqual(data[0]['credentials'], {'user': 'user2', 'pass': 'password2'})
 
-    @patch_has_permission
     def test_list_two_vendor(self):
         """Ensure we can list two vendor objects."""
         url = reverse('container_scanning:vendor-list')
@@ -79,7 +72,6 @@ class VendorsTests(APITestCase):
         self.assertEqual(data[1]['name'], 'VendorExample3')
         self.assertEqual(data[1]['credentials'], {'user': 'user3', 'pass': 'password3'})
 
-    @patch_has_permission
     def test_search_vendor(self):
         """Ensure we can search one vendor object."""
         url = reverse('container_scanning:vendor-list')
@@ -106,7 +98,6 @@ class VendorsTests(APITestCase):
         self.assertEqual(data[0]['name'], 'VendorExample3')
         self.assertEqual(data[0]['credentials'], {'user': 'user3', 'pass': 'password3'})
 
-    @patch_has_permission
     def test_search_empty_vendor(self):
         """Ensure will return 0 object with no match in search."""
         url = reverse('container_scanning:vendor-list')
@@ -138,7 +129,6 @@ class VendorTests(APITestCase):
         'container_scanning.views.vendors.JWTAPIPermission.has_permission', permission
     )
 
-    @patch_has_permission
     def test_get_vendor(self):
         """Ensure we can get a vendor object."""
         vendor = Vendor.objects.create(
@@ -156,7 +146,6 @@ class VendorTests(APITestCase):
         self.assertEqual(data['name'], 'VendorExample2')
         self.assertEqual(data['credentials'], {'user': 'user2', 'pass': 'password2'})
 
-    @patch_has_permission
     def test_put_vendor(self):
         """Ensure we can put a vendor object."""
 
@@ -180,7 +169,6 @@ class VendorTests(APITestCase):
         self.assertEqual(data['name'], 'VendorExample1')
         self.assertEqual(data['credentials'], {'user': 'user1', 'pass': 'password1'})
 
-    @patch_has_permission
     def test_delete_vendor(self):
         """Ensure we can delete a vendor object."""
         vendor = Vendor.objects.create(
