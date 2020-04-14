@@ -7,7 +7,6 @@ from container_scanning import exceptions
 from paclair.handler import PaClair
 from rest_framework import status
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,8 +21,7 @@ def add_image(config, tag):
         obj = paclair_object.analyse('Docker', tag)
     except Exception as err:
         logger.error(err)
-        raise exceptions.VendorException(
-            err, status.HTTP_400_BAD_REQUEST)
+        raise exceptions.VendorException(err, status.HTTP_400_BAD_REQUEST)
     else:
         obj = json.loads(obj)
         return obj['ancestry']['name']
@@ -31,19 +29,17 @@ def add_image(config, tag):
         fp.close()
 
 
-def get_vuln(image_vendor_obj):
+def get_vuln(config, image_id):
     try:
         fp = tempfile.NamedTemporaryFile()
-        data = pyaml.dump(image_vendor_obj.vendor.credentials)
+        data = pyaml.dump(config)
         fp.write(bytes(data, 'utf-8'))
         fp.seek(0)
         paclair_object = PaClair(fp.name)
-        obj = paclair_object._plugins['Docker'].clair.get_ancestry(
-            image_vendor_obj.vendor_image_internal_id)
+        obj = paclair_object._plugins['Docker'].clair.get_ancestry(image_id)
     except Exception as err:
         logger.error(err)
-        raise exceptions.VendorException(
-            err, status.HTTP_400_BAD_REQUEST)
+        raise exceptions.VendorException(err, status.HTTP_400_BAD_REQUEST)
     else:
         return obj
     finally:

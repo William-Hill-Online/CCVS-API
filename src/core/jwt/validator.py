@@ -81,8 +81,6 @@ class TokenValidator:
                 issuer=self.jwks_endpoint,
                 algorithms=['RS256'],
             )
-        except (jwt.InvalidTokenError,
-                jwt.ExpiredSignature,
-                jwt.DecodeError) as exc:
+        except (jwt.InvalidTokenError, jwt.ExpiredSignature, jwt.DecodeError) as exc:
             raise TokenError(str(exc))
         return jwt_data

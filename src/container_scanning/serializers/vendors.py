@@ -6,8 +6,7 @@ from rest_framework.validators import UniqueValidator
 class VendorSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(
-        max_length=100,
-        validators=[UniqueValidator(queryset=Vendor.objects.all())]
+        max_length=100, validators=[UniqueValidator(queryset=Vendor.objects.all())]
     )
     credentials = serializers.JSONField()
 
@@ -21,8 +20,7 @@ class VendorSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.credentials = validated_data.get(
-            'credentials', instance.credentials)
+        instance.credentials = validated_data.get('credentials', instance.credentials)
 
         instance.save()
         return instance

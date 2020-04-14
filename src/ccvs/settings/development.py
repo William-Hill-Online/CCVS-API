@@ -2,7 +2,7 @@ import os
 
 from .base import *  # noqa
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', False)
 
 ROOT_URLCONF = 'ccvs.urls.development'
 
@@ -20,11 +20,7 @@ DATABASES = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
     'loggers': {
         'django': {
             'handlers': ['console'],
@@ -34,9 +30,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
         },
-        'django.utils.autoreload': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        }
+        'django.utils.autoreload': {'handlers': ['console'], 'level': 'INFO'},
     },
 }

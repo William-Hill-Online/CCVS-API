@@ -4,13 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pylint = "==2.4.4"
-pre-commit = "==1.20.0"
-django-nose = "==1.4.6"
-coverage = "==5.0.1"
-pycodestyle = "==2.5.0"
-ipdb = "==0.12.3"
-django-pdb = "==0.6.2"
+pylint = "*"
+pre-commit = "*"
+django-nose = "*"
+coverage = "*"
+pycodestyle = "*"
+ipdb = "*"
+django-pdb = "*"
 
 [packages]
 djangorestframework = "==3.11.0"
@@ -29,6 +29,8 @@ celery = "==4.4.0"
 kombu-sqlalchemy = "==1.1.0"
 django-celery-results = "==1.1.2"
 django-health-check = "==3.11.1"
+whitenoise = "==5.0.1"
+django-allow-cidr = "==0.3.1"
 
 [requires]
 python_version = "3.7"

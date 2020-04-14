@@ -8,9 +8,7 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', '5432'),  # noqa: F405
         'USER': os.getenv('POSTGRES_USERNAME'),  # noqa: F405
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),  # noqa: F405
-        'TEST': {
-            'NAME': os.getenv('POSTGRES_NAME')+'_test',  # noqa: F405
-        },
+        'TEST': {'NAME': os.getenv('POSTGRES_NAME') + '_test'},  # noqa: F405
     }
 }
 
@@ -24,7 +22,7 @@ COVER_PERC = os.getenv('COVER_PERC', '75')  # noqa: F405
 
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package=container_scanning,core',
-    '--cover-erase',
-    '--cover-min-percentage='+COVER_PERC,
+    '--cover-package=container_scanning',
+    '--cover-min-percentage=' + COVER_PERC,
+    '--verbosity=2',
 ]

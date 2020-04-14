@@ -13,20 +13,27 @@ class Vendor(models.Model):
         return self.name
 
 
-class Image(models.Model):
+class Job(models.Model):
+
+    # list of statuses that job can have
+    STATUSES = (
+        ('pending', 'pending'),
+        ('started', 'started'),
+        ('finished', 'finished'),
+        ('failed', 'failed'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, unique=True)
-    vendors = models.ManyToManyField(Vendor, through='ImageVendor')
+    status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
 
-    def __str__(self):
-        return self.name
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data = JSONField()
+    result = JSONField(null=True)
 
+    def save(self, *args, **kwargs):
+        super(Job, self).save(*args, **kwargs)
+        if self.status == 'pending':
+            from .tasks import scan_image
 
-class ImageVendor(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
-    vendor_image_internal_id = models.CharField(max_length=200)
-
-    class Meta:
-        unique_together = (('vendor', 'image'))
+            scan_image.delay(job_id=self.id, data=self.data)
