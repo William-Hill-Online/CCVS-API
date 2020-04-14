@@ -49,14 +49,13 @@ class Analysis(models.Model):
         ('failed', 'failed'),
     )
     RESULTS = (
-        ('pending', 'pending'),
         ('passed', 'passed'),
         ('failed', 'failed'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
-    result = models.CharField(choices=RESULTS, max_length=20, default=RESULTS[0][0])
+    result = models.CharField(choices=RESULTS, max_length=20, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
