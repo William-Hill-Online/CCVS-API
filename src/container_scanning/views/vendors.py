@@ -1,6 +1,5 @@
 from container_scanning.models import Vendor
 from container_scanning.serializers import vendors as srlz_vendors
-from core.permissions import JWTAPIPermission
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -18,7 +17,7 @@ name_param = openapi.Parameter(
 
 class VendorView(APIView):
 
-    permission_classes = [JWTAPIPermission]
+    # permission_classes = [JWTAPIPermission]
     required_scopes = {
         'GET': ['container-scanning/vendors.read'],
         'PUT': ['container-scanning/vendors.update'],
