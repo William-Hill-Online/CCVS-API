@@ -9,5 +9,8 @@ install:
 before_script:
   - psql -c "CREATE USER ccvsuser WITH PASSWORD 'ccvspwd';" -U postgres
   - psql -c "ALTER USER ccvsuser CREATEDB;" -U postgres
+  - psql -c "DROP DATABASE IF EXISTS ccvs;" -U postgres
+  - psql -c "DROP DATABASE IF EXISTS ccvs_test;" -U postgres
+  - psql -c "CREATE DATABASE ccvs;" -U postgres
 script:
   - pipenv run python src/manage.py test --settings=ccvs.settings.tests

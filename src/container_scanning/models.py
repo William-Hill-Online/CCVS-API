@@ -13,27 +13,33 @@ class Vendor(models.Model):
         return self.name
 
 
-class Job(models.Model):
+class Analysis(models.Model):
 
-    # list of statuses that job can have
+    # list of statuses that analysis can have
     STATUSES = (
         ('pending', 'pending'),
         ('started', 'started'),
         ('finished', 'finished'),
         ('failed', 'failed'),
     )
+    RESULTS = (
+        ('pending', 'pending'),
+        ('passed', 'passed'),
+        ('failed', 'failed'),
+    )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
-
+    result = models.CharField(choices=RESULTS, max_length=20, default=STATUSES[0][0])
+    image = models.CharField(max_length=255, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    data = JSONField()
-    result = JSONField(null=True)
+    vulnerabilities = JSONField(null=True)
+    vendors = JSONField(null=True)
 
     def save(self, *args, **kwargs):
-        super(Job, self).save(*args, **kwargs)
+        super(Analysis, self).save(*args, **kwargs)
         if self.status == 'pending':
             from .tasks import scan_image
 
-            scan_image.delay(job_id=self.id, data=self.data)
+            scan_image.delay(analysis_id=self.id, image=self.image)

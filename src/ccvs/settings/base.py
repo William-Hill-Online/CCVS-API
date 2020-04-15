@@ -91,4 +91,5 @@ CELERY_RESULT_BACKEND = 'django-db'
 
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', '127.0.0.1')]
 
-ALLOWED_CIDR_NETS = os.environ.get('ALLOWED_CIDR_NETS', '').split(',')
+ALLOWED_CIDR_NETS = os.environ.get('ALLOWED_CIDR_NETS').split(
+    ',') if os.environ.get('ALLOWED_CIDR_NETS', '') else []

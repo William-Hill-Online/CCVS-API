@@ -1,23 +1,28 @@
-from container_scanning.models import Job
+from container_scanning.models import Analysis
 from rest_framework import serializers
 
 
-class JobSerializer(serializers.ModelSerializer):
+class AnalysisSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
 
     class Meta:
-        model = Job
+        model = Analysis
         fields = (
             'id',
             'status',
             'created_at',
             'updated_at',
-            'data',
+            'image',
             'result',
+            'vendors',
+            'vulnerabilities',
         )
         read_only_fields = (
+            'id',
             'status',
             'created_at',
             'updated_at',
             'result',
+            'vendors',
+            'vulnerabilities',
         )
