@@ -40,10 +40,10 @@ repos:
     sha: v1.14.4
     hooks:
       - id: validate_manifest
-  - repo: https://github.com/asottile/reorder_python_imports
-    sha: v1.3.5
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v4.3.21
     hooks:
-      - id: reorder-python-imports
+      - id: isort
   - repo: https://github.com/pre-commit/mirrors-autopep8
     sha: v1.4.4
     hooks:

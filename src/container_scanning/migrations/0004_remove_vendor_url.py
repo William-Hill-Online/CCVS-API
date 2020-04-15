@@ -9,8 +9,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='vendor',
-            name='url',
-        ),
+        migrations.RemoveField(model_name='vendor', name='url',),
     ]
