@@ -1,4 +1,3 @@
-from unittest.mock import MagicMock, patch
 
 from container_scanning.models import Vendor
 from django.urls import reverse
@@ -124,10 +123,6 @@ class VendorsTests(APITestCase):
 
 
 class VendorTests(APITestCase):
-    permission = MagicMock(return_value=True)
-    patch_has_permission = patch(
-        'container_scanning.views.vendors.JWTAPIPermission.has_permission', permission
-    )
 
     def test_get_vendor(self):
         """Ensure we can get a vendor object."""

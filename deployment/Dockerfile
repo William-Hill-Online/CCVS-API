@@ -1,41 +1,32 @@
 FROM python:3.7.2
 
-LABEL version="0.0.13"
+LABEL maintainer="application-security@williamhill.co.uk"
+LABEL version="1.0.0"
 
-ENV DOCKYARD_SRC=src
+ENV DOCKYARD_SRCPROJ=src
 ENV DOCKYARD_SRVHOME=/srv
-ENV DOCKYARD_SRVPROJ=$DOCKYARD_SRVHOME/$DOCKYARD_SRC
-ENV ALLOWED_HOSTS=127.0.0.1
+ENV DOCKYARD_SRVPROJ=$DOCKYARD_SRVHOME/$DOCKYARD_SRCPROJ
 
 # Update the default application repository sources list
 RUN apt-get update -y
-RUN apt-get install -y nginx
 RUN pip install pipenv
 
-# Create application subdirectories
-WORKDIR $DOCKYARD_SRVHOME
-RUN mkdir logs
+# Create user ccvs
+RUN useradd -m ccvs --uid=1000
 
-# Copy application source code to SRCDIR
-COPY $DOCKYARD_SRC $DOCKYARD_SRVPROJ
+# Copy application source code to SRVPROJ
+COPY $DOCKYARD_SRCPROJ $DOCKYARD_SRVPROJ
 COPY ./Pipfile $DOCKYARD_SRVPROJ/Pipfile
 COPY ./Pipfile.lock $DOCKYARD_SRVPROJ/Pipfile.lock
 
-# Port to expose
-EXPOSE 8080
+# Change ownership to ccvs
+RUN chown ccvs:ccvs -R $DOCKYARD_SRVHOME
 
+# Change current user
+USER ccvs:ccvs
+
+# Set workdir
 WORKDIR $DOCKYARD_SRVPROJ
 
 # Install Python dependencies
 RUN pipenv install
-
-# Copy entrypoint script into the image
-COPY ./deployment/docker-entrypoint.sh /
-COPY ./deployment/ccvs_nginx.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/ccvs_nginx.conf /etc/nginx/sites-enabled
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-
-
-USER ccvs:ccvs
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
