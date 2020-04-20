@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [1.1.0] - 2020-04-20
+
+### Removed
+- Remove old config using ngnix in Dockerfile
+- Remove auth using cognito
+
+### Changed
+- Use a simple config in Dockerfile
+
 ## [1.0.1] - 2020-04-20
 
 ### Fixed
@@ -20,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add analysis
 - Use anchore and clair v3 as vendors
 
-[unreleased]: https://github.com/william-Hill-Online/CCVS-API/compare/v1.0.1...HEAD
+[unreleased]: https://github.com/william-Hill-Online/CCVS-API/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/william-Hill-Online/CCVS-API/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/william-Hill-Online/CCVS-API/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/william-Hill-Online/CCVS-API/releases/tag/v1.0.0
