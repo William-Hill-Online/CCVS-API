@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class AnalysisIdView(APIView):
-    @swagger_auto_schema(responses={status.HTTP_202_ACCEPTED: szrl_analysis.AnalysisSerializer})
+    @swagger_auto_schema(responses={status.HTTP_200_OK: szrl_analysis.AnalysisSerializer})
     def get(self, request, analysis_id):
         analysis_obj = get_object_or_404(Analysis, id=analysis_id)
         serializer = szrl_analysis.AnalysisSerializer(analysis_obj)

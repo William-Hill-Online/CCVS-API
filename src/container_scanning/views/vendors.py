@@ -17,13 +17,6 @@ name_param = openapi.Parameter(
 
 class VendorView(APIView):
 
-    # permission_classes = [JWTAPIPermission]
-    required_scopes = {
-        'GET': ['container-scanning/vendors.read'],
-        'PUT': ['container-scanning/vendors.update'],
-        'DELETE': ['container-scanning/vendors.delete'],
-    }
-
     @swagger_auto_schema(responses={status.HTTP_200_OK: srlz_vendors.VendorSerializer})
     def get(self, request, vendor_id):
         vendor = get_object_or_404(Vendor, pk=vendor_id)
@@ -51,12 +44,6 @@ class VendorView(APIView):
 
 
 class VendorsView(APIView):
-    # permission_classes = [JWTAPIPermission]
-    permission_classes = []
-    required_scopes = {
-        'GET': ['container-scanning/vendors.read'],
-        'POST': ['container-scanning/vendors.create'],
-    }
 
     @swagger_auto_schema(
         responses={status.HTTP_200_OK: srlz_vendors.VendorSerializer(many=True)},

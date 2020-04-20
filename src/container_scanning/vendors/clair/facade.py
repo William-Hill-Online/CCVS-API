@@ -47,14 +47,13 @@ def get_vuln(config, image_id):
 
 
 def get_resume(result):
-
     resume = {}
 
     ancestry = result.get('ancestry')
-    for layer in ancestry.get('layers'):
-        detected_features = layer.get('detected_features')
+    for layer in ancestry.get('layers', []):
+        detected_features = layer.get('detected_features', [])
         for detected_feature in detected_features:
-            for vulnerability in detected_feature.get('vulnerabilities'):
+            for vulnerability in detected_feature.get('vulnerabilities', []):
                 severity = vulnerability.get('severity')
 
                 if severity in ['Critical', 'Defcon1']:
