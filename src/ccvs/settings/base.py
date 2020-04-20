@@ -74,20 +74,10 @@ SWAGGER_SETTINGS = {
     'JSON_EDITOR': True,
     'api_version': '0.1',
     'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete'],
-    'SECURITY_DEFINITIONS': {
-        'api_key': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'JWT authorization',
-        },
-    },
+    'SECURITY_DEFINITIONS': None
 }
 
-JWKS_ENDPOINT = os.getenv('JWKS_ENDPOINT')
-
 CELERY_RESULT_BACKEND = 'django-db'
-
 
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS', '127.0.0.1')]
 
