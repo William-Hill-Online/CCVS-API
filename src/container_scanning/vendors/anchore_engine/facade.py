@@ -46,11 +46,16 @@ def get_vuln(config, image_id):
     return image_vendor['payload']
 
 
-def get_resume(result):
+def get_resume(whitelist, result):
 
     resume = {}
 
     for vulnerability in result.get('vulnerabilities'):
+        # if the vulnerability is in the whitelist
+        # should be ignored
+        if vulnerability.get('vuln') not in whitelist:
+            continue
+
         severity = vulnerability.get('severity')
         # Unknown, Negligible, Low, Medium, High, Critical
         key = severity.lower() + '_vulns'
