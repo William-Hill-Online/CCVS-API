@@ -29,18 +29,20 @@ class Analysis(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
-    result = models.CharField(choices=RESULTS, max_length=20, default=STATUSES[0][0])
+    status = models.CharField(
+        choices=STATUSES, max_length=20, default=STATUSES[0][0])
+    result = models.CharField(
+        choices=RESULTS, max_length=20, default=STATUSES[0][0])
     image = models.CharField(max_length=255, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    vulnerabilities = JSONField(null=True)
-    vendors = JSONField(null=True)
-    whitelist = JSONField(null=True)
+    vulnerabilities = JSONField(default=dict)
+    vendors = JSONField(default=dict)
+    whitelist = JSONField(default=dict)
 
     def save(self, *args, **kwargs):
         super(Analysis, self).save(*args, **kwargs)
         if self.status == 'pending':
             from .tasks import scan_image
 
-            scan_image.delay(analysis_id=self.id, image=self.image)
+            scan_image.delay(analysis_id=self.id)
