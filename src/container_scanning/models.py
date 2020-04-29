@@ -36,6 +36,7 @@ class Analysis(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     vulnerabilities = JSONField(null=True)
     vendors = JSONField(null=True)
+    whitelist = JSONField(null=True)
 
     def save(self, *args, **kwargs):
         super(Analysis, self).save(*args, **kwargs)
