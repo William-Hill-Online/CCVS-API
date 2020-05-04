@@ -1,7 +1,10 @@
+import logging
 import uuid
 
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Vendor(models.Model):
@@ -45,4 +48,6 @@ class Analysis(models.Model):
         if self.status == 'pending':
             from .tasks import scan_image
 
-            scan_image.delay(analysis_id=self.id)
+            task_id = scan_image.delay(analysis_id=self.id)
+
+            LOGGER.info('Analysis ID:%s, Task Id: %s', self.id, task_id)

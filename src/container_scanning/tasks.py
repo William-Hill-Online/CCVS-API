@@ -70,6 +70,8 @@ def scan_image(analysis_id):
             if result_vendor.get('error') is not None \
                     and error_control is False:
                 error_control = True
+                LOGGER.exception(
+                    msg={'error': result_vendor.get('error')})
 
     except Exception as err:
         analysis.status = 'failed'
