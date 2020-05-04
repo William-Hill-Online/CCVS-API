@@ -46,18 +46,18 @@ def get_vuln(config, image_id):
         fp.close()
 
 
-def get_resume(whitelist, result):
+def get_resume(whitelist, results):
 
     resume = {}
 
-    ancestry = result.get('ancestry')
+    ancestry = results.get('ancestry')
     for layer in ancestry.get('layers', []):
         detected_features = layer.get('detected_features', [])
         for detected_feature in detected_features:
             for vulnerability in detected_feature.get('vulnerabilities', []):
                 # if the vulnerability is in the whitelist
                 # should be ignored
-                if vulnerability.get('name') not in whitelist:
+                if vulnerability.get('name') in whitelist:
                     continue
 
                 severity = vulnerability.get('severity')
