@@ -16,6 +16,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             'result',
             'vendors',
             'vulnerabilities',
+            'whitelist'
         )
         read_only_fields = (
             'id',

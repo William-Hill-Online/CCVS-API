@@ -46,7 +46,7 @@ services:
             POSTGRES_DB: ccvs
             POSTGRES_USER: ccvsuser
             POSTGRES_PASSWORD: ccvspwd
-        image: "postgres:9.4.21-alpine"
+        image: "postgres:9.6-alpine"
         networks:
             - ccvs_net
         ports:
