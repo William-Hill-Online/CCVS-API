@@ -1,3 +1,4 @@
+import json
 import logging
 
 from celery.decorators import task
@@ -12,81 +13,66 @@ LOGGER = logging.getLogger(__name__)
 
 def scan_image_vendor(analysis, vendor):
     """Function that will call function of the vendor and start the scan, get
-    results and parser the result in a resume."""
+    results and parser the result."""
 
-    result = {
-        'error': None
+    vendor_facade = initialize(vendor.name)
+
+    # Create scan
+    image_id = vendor_facade.add_image(
+        config=vendor.credentials,
+        tag=analysis.image
+    )
+
+    # Get scan
+    vendor_output = vendor_facade.get_vuln(
+        config=vendor.credentials,
+        image_id=image_id
+    )
+
+    # Parse results and filter whitelist
+    result = vendor_facade.parse_results(
+        whitelist=analysis.whitelist.get(vendor.name, []),
+        results=vendor_output
+    )
+
+    output = {
+        'output': json.dumps(vendor_output),
+        'image_id': image_id
     }
-    try:
-        vendor_facade = initialize(vendor.name)
-        if vendor_facade:
-            image_id = vendor_facade.add_image(
-                config=vendor.credentials,
-                tag=analysis.image
-            )
-            results = vendor_facade.get_vuln(
-                config=vendor.credentials,
-                image_id=image_id
-            )
-            resume = vendor_facade.get_resume(
-                whitelist=analysis.whitelist.get(vendor.name, []),
-                results=results
-            )
-            analysis.vendors[vendor.name] = results
-            analysis.vulnerabilities[vendor.name] = resume
-            analysis.save()
-        else:
-            raise Exception('Vendor not initialized')
 
-    except APIException as err:
-        result['error'] = err.detail
-
-    except Exception as err:
-        result['error'] = str(err)
-
-    finally:
-        return result
-
-
-def scan_image_vendors(analysis):
-
-    vendors = Vendor.objects.all()
-    for vendor in vendors:
-        yield scan_image_vendor(analysis, vendor)
+    return result, output
 
 
 @task(name='container_scanning.tasks.scan_image')
 def scan_image(analysis_id):
-    """Function that will scan image, update status and result of anilysis."""
+    """Function that will scan image, update status and results of an
+    analysis."""
 
     analysis = Analysis.objects.get(id=analysis_id)
     analysis.status = 'started'
     analysis.save()
 
-    error_control = False
     try:
-        for result_vendor in scan_image_vendors(analysis):
-            # Check the first error
-            if result_vendor.get('error') is not None \
-                    and error_control is False:
-                error_control = True
-                LOGGER.exception(
-                    msg={'error': result_vendor.get('error')})
-
-    except Exception as err:
-        analysis.status = 'failed'
-        analysis.result = 'failed'
-        LOGGER.exception(msg={'error': str(err)})
-
-    else:
-        if error_control is False:
-            vulns = analysis.vulnerabilities.values()
-            analysis.status = 'finished'
-            analysis.result = 'failed' if \
-                [i for i in vulns if i] else 'passed'
+        vendors = Vendor.objects.all()
+        if vendors:
+            for vendor in vendors:
+                result, output = scan_image_vendor(analysis, vendor)
+                analysis.ccvs_results[vendor.name] = result
+                analysis.vendors[vendor.name] = output
+                analysis.save()
         else:
-            analysis.status = 'failed'
-            analysis.result = 'failed'
+            analysis.errors.append('Vendors not registred')
+
+    except (
+        APIException,
+        Exception
+    ) as err:
+        LOGGER.exception(msg={'error': str(err)})
+        analysis.errors.append(str(err))
+        analysis.save()
 
     finally:
+        vulns = [item for item in analysis.ccvs_results.values() if item]
+        analysis.result = 'failed' if vulns or analysis.errors else 'passed'
+        analysis.status = 'finished'
         analysis.save()
