@@ -2,8 +2,6 @@ import os
 
 from .base import *  # noqa
 
-DEBUG = os.getenv('DEBUG', False)
-
 ROOT_URLCONF = 'ccvs.urls.development'
 
 DATABASES = {

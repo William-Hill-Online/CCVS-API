@@ -46,9 +46,9 @@ def get_vuln(config, image_id):
         fp.close()
 
 
-def get_resume(whitelist, results):
+def parse_results(whitelist, results):
 
-    resume = {}
+    new_results = {}
 
     ancestry = results.get('ancestry')
     for layer in ancestry.get('layers', []):
@@ -61,15 +61,23 @@ def get_resume(whitelist, results):
                     continue
 
                 severity = vulnerability.get('severity')
-
                 if severity in ['Critical', 'Defcon1']:
                     key = 'critical_vulns'
                 else:
                     # Unknown, Negligible, Low, Medium, High
                     key = severity.lower() + '_vulns'
 
-                if not resume.get(key):
-                    resume[key] = []
-                resume[key].append(vulnerability)
+                if not new_results.get(key):
+                    new_results[key] = []
 
-    return resume
+                name = detected_feature.get('name')
+                version = detected_feature.get('version')
+                new_results[key].append({
+                    'package': f'{name}-{version}',
+                    'name': vulnerability.get('name'),
+                    'fix': vulnerability.get('fixed_by'),
+                    'url': vulnerability.get('link'),
+                    'severity': vulnerability.get('severity')
+                })
+
+    return new_results

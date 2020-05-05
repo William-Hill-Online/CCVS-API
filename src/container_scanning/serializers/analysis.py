@@ -13,9 +13,10 @@ class AnalysisSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'image',
-            'result',
             'vendors',
-            'vulnerabilities',
+            'errors',
+            'result',
+            'ccvs_results',
             'whitelist'
         )
         read_only_fields = (
@@ -23,7 +24,8 @@ class AnalysisSerializer(serializers.ModelSerializer):
             'status',
             'created_at',
             'updated_at',
-            'result',
             'vendors',
-            'vulnerabilities',
+            'errors',
+            'result',
+            'ccvs_results',
         )
