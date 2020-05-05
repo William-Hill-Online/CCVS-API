@@ -23,7 +23,6 @@ class Analysis(models.Model):
         ('pending', 'pending'),
         ('started', 'started'),
         ('finished', 'finished'),
-        ('failed', 'failed'),
     )
     RESULTS = (
         ('pending', 'pending'),
@@ -39,8 +38,9 @@ class Analysis(models.Model):
     image = models.CharField(max_length=255, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    vulnerabilities = JSONField(default=dict)
     vendors = JSONField(default=dict)
+    errors = JSONField(default=list)
+    ccvs_results = JSONField(default=dict)
     whitelist = JSONField(default=dict)
 
     def save(self, *args, **kwargs):
