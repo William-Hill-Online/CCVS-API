@@ -6,6 +6,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = config('SECRET_KEY')
 
+DEBUG = os.getenv('DEBUG', False)
+
 INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'container_scanning.apps.ContainerScannningConfig',
@@ -87,7 +89,11 @@ ALLOWED_CIDR_NETS = os.environ.get('ALLOWED_CIDR_NETS').split(
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        }
+    },
     'loggers': {
         'ccvs': {
             'handlers': ['console'],
@@ -105,6 +111,5 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
         },
-        'django.utils.autoreload': {'handlers': ['console'], 'level': 'INFO'},
     },
 }
