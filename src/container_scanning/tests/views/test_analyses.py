@@ -19,7 +19,7 @@ class AnalysesTests(APITestCase):
         self.assertEqual(Analysis.objects.get().image, 'image_test')
         self.assertEqual(Analysis.objects.get().result, 'pending')
         self.assertEqual(Analysis.objects.get().vendors, {})
-        self.assertEqual(Analysis.objects.get().vulnerabilities, {})
+        self.assertEqual(Analysis.objects.get().ccvs_results, {})
         self.assertEqual(Analysis.objects.get().whitelist, {})
 
     def test_create_analysis_whitelist(self):
@@ -39,7 +39,7 @@ class AnalysesTests(APITestCase):
         self.assertEqual(Analysis.objects.get().image, 'image_test')
         self.assertEqual(Analysis.objects.get().result, 'pending')
         self.assertEqual(Analysis.objects.get().vendors, {})
-        self.assertEqual(Analysis.objects.get().vulnerabilities, {})
+        self.assertEqual(Analysis.objects.get().ccvs_results, {})
         self.assertEqual(Analysis.objects.get().whitelist,
                          {'anchore': ['CVE1']})
 
@@ -59,7 +59,7 @@ class AnalysisTests(APITestCase):
         self.assertEqual(data['image'], 'image_test')
         self.assertEqual(data['result'], 'pending')
         self.assertEqual(data['vendors'], {})
-        self.assertEqual(data['vulnerabilities'], {})
+        self.assertEqual(data['ccvs_results'], {})
         self.assertEqual(data['whitelist'], {})
 
     def test_get_vendor_pending_whitelist(self):
@@ -76,7 +76,7 @@ class AnalysisTests(APITestCase):
         self.assertEqual(data['image'], 'image_test')
         self.assertEqual(data['result'], 'pending')
         self.assertEqual(data['vendors'], {})
-        self.assertEqual(data['vulnerabilities'], {})
+        self.assertEqual(data['ccvs_results'], {})
         self.assertEqual(data['whitelist'], {})
 
     def test_get_vendor_success(self):
@@ -88,7 +88,7 @@ class AnalysisTests(APITestCase):
                 'image': 'image_test',
                 'result': 'passed',
                 'vendors': {'anchore': 'result'},
-                'vulnerabilities': {'anchore': 'vulnerabilities'},
+                'ccvs_results': {'anchore': 'vulnerabilities'},
                 'whitelist': {'anchore': ['CVE1']},
             }
         )
@@ -101,6 +101,6 @@ class AnalysisTests(APITestCase):
         self.assertEqual(data['status'], 'finished')
         self.assertEqual(data['result'], 'passed')
         self.assertDictEqual(data['vendors'], {'anchore': 'result'})
-        self.assertDictEqual(data['vulnerabilities'], {
+        self.assertDictEqual(data['ccvs_results'], {
                              'anchore': 'vulnerabilities'})
         self.assertDictEqual(data['whitelist'], {'anchore': ['CVE1']})
