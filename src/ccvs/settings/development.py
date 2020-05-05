@@ -2,8 +2,6 @@ import os
 
 from .base import *  # noqa
 
-DEBUG = os.getenv('DEBUG', False)
-
 ROOT_URLCONF = 'ccvs.urls.development'
 
 DATABASES = {
@@ -15,21 +13,4 @@ DATABASES = {
         'USER': os.getenv('POSTGRES_USERNAME'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
     }
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {'console': {'class': 'logging.StreamHandler'}},
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-        'paclair': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-        'django.utils.autoreload': {'handlers': ['console'], 'level': 'INFO'},
-    },
 }

@@ -18,8 +18,30 @@ class AnalysesTests(APITestCase):
         self.assertEqual(Analysis.objects.get().status, 'pending')
         self.assertEqual(Analysis.objects.get().image, 'image_test')
         self.assertEqual(Analysis.objects.get().result, 'pending')
-        self.assertEqual(Analysis.objects.get().vendors, None)
-        self.assertEqual(Analysis.objects.get().vulnerabilities, None)
+        self.assertEqual(Analysis.objects.get().vendors, {})
+        self.assertEqual(Analysis.objects.get().ccvs_results, {})
+        self.assertEqual(Analysis.objects.get().whitelist, {})
+
+    def test_create_analysis_whitelist(self):
+        """Ensure we can create a new analysis object with whitelist."""
+
+        url = reverse('container_scanning:analysis')
+        data = {
+            'image': 'image_test',
+            'whitelist': {'anchore': ['CVE1']}
+        }
+        response = self.client.post(url, data, format='json')
+
+        # Testing if the post works
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(Analysis.objects.count(), 1)
+        self.assertEqual(Analysis.objects.get().status, 'pending')
+        self.assertEqual(Analysis.objects.get().image, 'image_test')
+        self.assertEqual(Analysis.objects.get().result, 'pending')
+        self.assertEqual(Analysis.objects.get().vendors, {})
+        self.assertEqual(Analysis.objects.get().ccvs_results, {})
+        self.assertEqual(Analysis.objects.get().whitelist,
+                         {'anchore': ['CVE1']})
 
 
 class AnalysisTests(APITestCase):
@@ -36,8 +58,26 @@ class AnalysisTests(APITestCase):
         self.assertEqual(data['status'], 'pending')
         self.assertEqual(data['image'], 'image_test')
         self.assertEqual(data['result'], 'pending')
-        self.assertEqual(data['vendors'], None)
-        self.assertEqual(data['vulnerabilities'], None)
+        self.assertEqual(data['vendors'], {})
+        self.assertEqual(data['ccvs_results'], {})
+        self.assertEqual(data['whitelist'], {})
+
+    def test_get_vendor_pending_whitelist(self):
+        """Ensure we can get an analysis pending with a whitelist."""
+
+        analysis = Analysis.objects.create(**{'image': 'image_test'})
+        url = reverse('container_scanning:analysis-id',
+                      kwargs={'analysis_id': analysis.id})
+        response = self.client.get(url, format='json')
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data['status'], 'pending')
+        self.assertEqual(data['image'], 'image_test')
+        self.assertEqual(data['result'], 'pending')
+        self.assertEqual(data['vendors'], {})
+        self.assertEqual(data['ccvs_results'], {})
+        self.assertEqual(data['whitelist'], {})
 
     def test_get_vendor_success(self):
         """Ensure we can get a analysis with status success."""
@@ -47,8 +87,9 @@ class AnalysisTests(APITestCase):
                 'status': 'finished',
                 'image': 'image_test',
                 'result': 'passed',
-                'vendors': {'key': 'value'},
-                'vulnerabilities': {'key2': 'value2'},
+                'vendors': {'anchore': 'result'},
+                'ccvs_results': {'anchore': 'vulnerabilities'},
+                'whitelist': {'anchore': ['CVE1']},
             }
         )
         url = reverse('container_scanning:analysis-id',
@@ -59,5 +100,7 @@ class AnalysisTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data['status'], 'finished')
         self.assertEqual(data['result'], 'passed')
-        self.assertDictEqual(data['vendors'], {'key': 'value'})
-        self.assertDictEqual(data['vulnerabilities'], {'key2': 'value2'})
+        self.assertDictEqual(data['vendors'], {'anchore': 'result'})
+        self.assertDictEqual(data['ccvs_results'], {
+                             'anchore': 'vulnerabilities'})
+        self.assertDictEqual(data['whitelist'], {'anchore': ['CVE1']})

@@ -1,7 +1,10 @@
+import logging
 import uuid
 
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Vendor(models.Model):
@@ -20,7 +23,6 @@ class Analysis(models.Model):
         ('pending', 'pending'),
         ('started', 'started'),
         ('finished', 'finished'),
-        ('failed', 'failed'),
     )
     RESULTS = (
         ('pending', 'pending'),
@@ -29,17 +31,23 @@ class Analysis(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(choices=STATUSES, max_length=20, default=STATUSES[0][0])
-    result = models.CharField(choices=RESULTS, max_length=20, default=STATUSES[0][0])
+    status = models.CharField(
+        choices=STATUSES, max_length=20, default=STATUSES[0][0])
+    result = models.CharField(
+        choices=RESULTS, max_length=20, default=STATUSES[0][0])
     image = models.CharField(max_length=255, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    vulnerabilities = JSONField(null=True)
-    vendors = JSONField(null=True)
+    vendors = JSONField(default=dict)
+    errors = JSONField(default=list)
+    ccvs_results = JSONField(default=dict)
+    whitelist = JSONField(default=dict)
 
     def save(self, *args, **kwargs):
         super(Analysis, self).save(*args, **kwargs)
         if self.status == 'pending':
             from .tasks import scan_image
 
-            scan_image.delay(analysis_id=self.id, image=self.image)
+            task_id = scan_image.delay(analysis_id=self.id)
+
+            LOGGER.info('Analysis ID:%s, Task Id: %s', self.id, task_id)

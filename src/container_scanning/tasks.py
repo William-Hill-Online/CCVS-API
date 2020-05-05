@@ -1,75 +1,78 @@
-from functools import wraps
+import json
+import logging
 
 from celery.decorators import task
 from container_scanning.models import Vendor
 from container_scanning.vendors.initialize import initialize
+from rest_framework.exceptions import APIException
 
 from .models import Analysis
 
-
-def update_analysis(fn):
-    """Decorator that will update Analysis with result of the function."""
-
-    @wraps(fn)
-    def wrapper(analysis_id, *args, **kwargs):
-        analysis = Analysis.objects.get(id=analysis_id)
-        analysis.status = 'started'
-        analysis.save()
-        try:
-            # execute the function fn
-            vendors, vulnerabilities = fn(*args, **kwargs)
-            analysis.status = 'finished'
-            analysis.result = 'failed' if \
-                [i for i in vulnerabilities.values() if i] else 'passed'
-            analysis.vulnerabilities = vulnerabilities
-            analysis.vendors = vendors
-            analysis.save()
-        except Exception as err:
-            analysis.vendors = {'err': str(err)}
-            analysis.vulnerabilities = {}
-            analysis.result = 'failed'
-            analysis.status = 'failed'
-            analysis.save()
-
-    return wrapper
+LOGGER = logging.getLogger(__name__)
 
 
-def scan_image_vendor(image_tag, vendor):
-    try:
-        vendor_facade = initialize(vendor.name)
-        if vendor_facade:
-            image_id = vendor_facade.add_image(vendor.credentials, tag=image_tag)
-            image_vendor = vendor_facade.get_vuln(vendor.credentials, image_id=image_id)
-            resume = vendor_facade.get_resume(image_vendor)
-        else:
-            raise Exception('Vendor not initialized')
-    except Exception as err:
-        raise Exception(err)
-    else:
-        return (image_vendor, resume)
+def scan_image_vendor(analysis, vendor):
+    """Function that will call function of the vendor and start the scan, get
+    results and parser the result."""
 
+    vendor_facade = initialize(vendor.name)
 
-def scan_image_vendors(image_tag):
+    # Create scan
+    image_id = vendor_facade.add_image(
+        config=vendor.credentials,
+        tag=analysis.image
+    )
 
-    vendors = Vendor.objects.all()
-    for vendor in vendors:
-        try:
-            vendor_result = scan_image_vendor(image_tag, vendor)
-        except Exception as err:
-            yield (vendor.name, str(err), None)
-        else:
-            yield (vendor.name, vendor_result[0], vendor_result[1])
+    # Get scan
+    vendor_output = vendor_facade.get_vuln(
+        config=vendor.credentials,
+        image_id=image_id
+    )
+
+    # Parse results and filter whitelist
+    result = vendor_facade.parse_results(
+        whitelist=analysis.whitelist.get(vendor.name, []),
+        results=vendor_output
+    )
+
+    output = {
+        'output': json.dumps(vendor_output),
+        'image_id': image_id
+    }
+
+    return result, output
 
 
 @task(name='container_scanning.tasks.scan_image')
-@update_analysis
-def scan_image(image):
-    if not image:
-        raise Exception('Image was not sending')
-    vulnerabilities = {}
-    vendors = {}
-    for result in scan_image_vendors(image):
-        vendors[result[0]] = result[1]
-        vulnerabilities[result[0]] = result[2]
+def scan_image(analysis_id):
+    """Function that will scan image, update status and results of an
+    analysis."""
 
-    return vendors, vulnerabilities
+    analysis = Analysis.objects.get(id=analysis_id)
+    analysis.status = 'started'
+    analysis.save()
+
+    try:
+        vendors = Vendor.objects.all()
+        if vendors:
+            for vendor in vendors:
+                result, output = scan_image_vendor(analysis, vendor)
+                analysis.ccvs_results[vendor.name] = result
+                analysis.vendors[vendor.name] = output
+                analysis.save()
+        else:
+            analysis.errors.append('Vendors not registred')
+
+    except (
+        APIException,
+        Exception
+    ) as err:
+        LOGGER.exception(msg={'error': str(err)})
+        analysis.errors.append(str(err))
+        analysis.save()
+
+    finally:
+        vulns = [item for item in analysis.ccvs_results.values() if item]
+        analysis.result = 'failed' if vulns or analysis.errors else 'passed'
+        analysis.status = 'finished'
+        analysis.save()
