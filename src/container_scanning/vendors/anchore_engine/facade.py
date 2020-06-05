@@ -15,7 +15,8 @@ msg_wait = [
 
 
 def add_image(config, tag):
-    image_vendor = apiexternal.add_image(config, tag=tag, force=True)
+    image_vendor = apiexternal.add_image(
+        config, tag=tag, force=True, autosubscribe=False)
     if image_vendor['success'] is False:
         raise exceptions.VendorException(
             image_vendor['error'], status.HTTP_400_BAD_REQUEST)
@@ -28,14 +29,14 @@ def add_image(config, tag):
 @retry(exceptions=exceptions.AnchoreNotAnalyzed,
        tries=20,
        delay=20,
-       backoff=1,
+       backoff=3,
        logger=logger)
 def get_vuln(config, image_id):
     query_group = 'vuln'
     query_type = 'all'
     image_vendor = apiexternal.query_image(
         config, imageDigest=image_id, query_group=query_group,
-        query_type=query_type, vendor_only=True)
+        query_type=query_type, force_refresh=True, vendor_only=True)
 
     if image_vendor['success'] is False:
         if image_vendor['error'].get('message') in msg_wait:
