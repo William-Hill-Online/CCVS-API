@@ -36,7 +36,7 @@ def get_vuln(config, image_id):
     query_type = 'all'
     image_vendor = apiexternal.query_image(
         config, imageDigest=image_id, query_group=query_group,
-        query_type=query_type, force_refresh=True, vendor_only=True)
+        query_type=query_type, vendor_only=True)
 
     if image_vendor['success'] is False:
         if image_vendor['error'].get('message') in msg_wait:
