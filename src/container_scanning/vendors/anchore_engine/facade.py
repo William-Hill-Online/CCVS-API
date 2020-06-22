@@ -65,7 +65,8 @@ def parse_results(whitelist, results):
             new_results[key] = []
 
         new_results[key].append({
-            'package': vulnerability.get('package'),
+            'package_name': vulnerability.get('package_name'),
+            'package_version': vulnerability.get('package_version'),
             'name': vulnerability.get('vuln'),
             'fix': vulnerability.get('fix'),
             'url': vulnerability.get('url'),
