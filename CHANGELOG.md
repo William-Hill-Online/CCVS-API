@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [1.2.1] - 2020-07-29
+### Fix
+- Fix scanning of big images
+### Update
+- Bump deps
+
 ## [1.2.0] - 2020-05-05
 ### Changed
 - Change analysis response to standardize results

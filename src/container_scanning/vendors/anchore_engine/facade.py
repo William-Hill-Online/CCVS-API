@@ -27,7 +27,7 @@ def add_image(config, tag):
 
 
 @retry(exceptions=exceptions.AnchoreNotAnalyzed,
-       tries=20,
+       timeout=6000,
        delay=20,
        backoff=3,
        logger=logger)
