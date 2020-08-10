@@ -1,0 +1,200 @@
+swagger: '2.0'
+info:
+  title: CCVS API
+  description: Central Container Vulnerability Scanning
+  version: v1
+host: localhost:8000
+schemes:
+  - http
+basePath: /container-scanning
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /analysis/:
+    post:
+      operationId: analysis_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Analysis'
+      responses:
+        '202':
+          description: ''
+          schema:
+            $ref: '#/definitions/Analysis'
+      tags:
+        - analysis
+    parameters: []
+  /analysis/{analysis_id}/:
+    get:
+      operationId: analysis_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Analysis'
+      tags:
+        - analysis
+    parameters:
+      - name: analysis_id
+        in: path
+        required: true
+        type: string
+  /vendors/:
+    get:
+      operationId: vendors_list
+      description: ''
+      parameters:
+        - name: name
+          in: query
+          description: Name of the vendor
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Vendor'
+      tags:
+        - vendors
+    post:
+      operationId: vendors_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Vendor'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Vendor'
+      tags:
+        - vendors
+    parameters: []
+  /vendors/{vendor_id}/:
+    get:
+      operationId: vendors_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Vendor'
+      tags:
+        - vendors
+    put:
+      operationId: vendors_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Vendor'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Vendor'
+      tags:
+        - vendors
+    delete:
+      operationId: vendors_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - vendors
+    parameters:
+      - name: vendor_id
+        in: path
+        required: true
+        type: string
+definitions:
+  Analysis:
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      status:
+        title: Status
+        type: string
+        enum:
+          - pending
+          - started
+          - finished
+        readOnly: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      image:
+        title: Image
+        type: string
+        maxLength: 255
+        minLength: 1
+      vendors:
+        title: Vendors
+        type: object
+        readOnly: true
+      errors:
+        title: Errors
+        type: object
+        readOnly: true
+      result:
+        title: Result
+        type: string
+        enum:
+          - pending
+          - passed
+          - failed
+        readOnly: true
+      ccvs_results:
+        title: Ccvs results
+        type: object
+        readOnly: true
+      whitelist:
+        title: Whitelist
+        type: object
+  Vendor:
+    required:
+      - name
+      - credentials
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        minLength: 1
+      credentials:
+        title: Credentials
+        type: object

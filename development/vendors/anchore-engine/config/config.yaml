@@ -52,17 +52,18 @@ feeds:
   sync_enabled: True
   ssl_verify: True
   selective_sync:
-    # If enabled only sync specific feeds instead of all.
-    enabled: True
-    feeds:
-      vulnerabilities: True
-      # Warning: enabling the packages and nvd sync causes the service to require much
-      #   more memory to do process the significant data volume. We recommend at least 4GB available for the container
-      packages: False
-      nvd: False
-      # Enabling snyk syncs snyk vulnerability data from an on-premise anchore enterprise feeds service. Please contact
-      # anchore support for finding out more about this service
-      snyk: False
+    github: true
+    vulnerabilities: false
+    # Warning: enabling the packages and nvd sync causes the service to require much
+    #   more memory to do process the significant data volume. We recommend at least 4GB available for the container
+    packages: false
+    nvdv2: false
+    # Enabling snyk syncs snyk vulnerability data from an on-premise anchore enterprise feeds service. Please contact
+    # anchore support for finding out more about this service
+    snyk: false
+    # Enabling vulndb syncs vulndb vulnerability data from an on-premise anchore enterprise feeds service. Please contact
+    # anchore support for finding out more about this service
+    vulndb: false
   anonymous_user_username: anon@ancho.re
   anonymous_user_password: pbiU2RYZ2XrmYQ
   url: 'https://ancho.re/v1/service/feeds'

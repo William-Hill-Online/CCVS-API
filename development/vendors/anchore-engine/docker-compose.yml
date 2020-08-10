@@ -2,7 +2,7 @@ version: '3.1'
 services:
   anchore-engine:
     container_name: anchore_engine
-    image: docker.io/anchore/anchore-engine:v0.6.0
+    image: docker.io/anchore/anchore-engine:v0.7.1
     command: anchore-manager service start --all
     depends_on:
       - anchore-db

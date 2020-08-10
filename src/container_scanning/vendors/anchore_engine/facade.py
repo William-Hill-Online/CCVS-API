@@ -15,7 +15,8 @@ msg_wait = [
 
 
 def add_image(config, tag):
-    image_vendor = apiexternal.add_image(config, tag=tag, force=True)
+    image_vendor = apiexternal.add_image(
+        config, tag=tag, force=True, autosubscribe=False)
     if image_vendor['success'] is False:
         raise exceptions.VendorException(
             image_vendor['error'], status.HTTP_400_BAD_REQUEST)
@@ -28,7 +29,7 @@ def add_image(config, tag):
 @retry(exceptions=exceptions.AnchoreNotAnalyzed,
        timeout=6000,
        delay=20,
-       backoff=1,
+       backoff=3,
        logger=logger)
 def get_vuln(config, image_id):
     query_group = 'vuln'
@@ -64,7 +65,8 @@ def parse_results(whitelist, results):
             new_results[key] = []
 
         new_results[key].append({
-            'package': vulnerability.get('package'),
+            'package_name': vulnerability.get('package_name'),
+            'package_version': vulnerability.get('package_version'),
             'name': vulnerability.get('vuln'),
             'fix': vulnerability.get('fix'),
             'url': vulnerability.get('url'),

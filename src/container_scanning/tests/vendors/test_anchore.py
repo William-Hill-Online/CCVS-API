@@ -20,7 +20,9 @@ class AnchoreTest(TestCase):
         vendor = vendors.VendorSerializer(
             data={
                 'name': name,
-                'credentials': {'user': 'user2', 'pass': 'password2', 'url': 'url'},
+                'credentials': {
+                    'user': 'user2', 'pass': 'password2', 'url': 'url'
+                },
             }
         )
         vendor.is_valid()
@@ -37,7 +39,8 @@ class AnchoreTest(TestCase):
         }
 
         self.assertEqual(facade.add_image(self.config, self.tag), 'venderId')
-        mock_anchore.add_image.assert_called_with(self.config, tag=self.tag, force=True)
+        mock_anchore.add_image.assert_called_with(
+            self.config, tag=self.tag, autosubscribe=False, force=True)
 
     @patch('container_scanning.vendors.anchore_engine.facade.apiexternal')
     def test_fail_add_image(self, mock_anchore):
