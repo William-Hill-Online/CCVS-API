@@ -1,0 +1,28 @@
+version: '3'
+services:
+  trivy-server:
+    image: aquasec/trivy
+    container_name: trivy_server
+    command: "server --debug  --listen 0.0.0.0:8080"
+    ports:
+      - "8080"
+    networks:
+        - ccvs-scanning-api_ccvs_net
+
+  trivy-wrapper:
+    image: williamhillonline/trivy-wrapper-api:feature-feature_first-version
+    container_name: trivy_wrapper
+    environment:
+        GOPATH: /go/
+        REMOTE_TRIVY: http://trivy_server:8080
+    command: "go run server.go"
+    ports:
+      - "8080:8080"
+    networks:
+        - ccvs-scanning-api_ccvs_net
+    depends_on:
+        - trivy-server
+
+networks:
+  ccvs-scanning-api_ccvs_net:
+    external: true
