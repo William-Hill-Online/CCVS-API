@@ -33,26 +33,27 @@ def get_vuln(config, image_id):
 def parse_results(whitelist, results):
     new_results = {}
     for result in results.get('result', []):
-        vulnerabilities = result.get('Vulnerabilities', [])
-        for vulnerability in vulnerabilities:
-            # if the vulnerability is in the whitelist
-            # should be ignored
-            if vulnerability.get('VulnerabilityID') in whitelist:
-                continue
+        vulnerabilities = result.get('Vulnerabilities')
+        if vulnerabilities:
+            for vulnerability in vulnerabilities:
+                # if the vulnerability is in the whitelist
+                # should be ignored
+                if vulnerability.get('VulnerabilityID') in whitelist:
+                    continue
 
-            severity = vulnerability.get('Severity')
-            # Unknown, Negligible, Low, Medium, High, Critical
-            key = severity.lower() + '_vulns'
-            if not new_results.get(key):
-                new_results[key] = []
+                severity = vulnerability.get('Severity')
+                # Unknown, Negligible, Low, Medium, High, Critical
+                key = severity.lower() + '_vulns'
+                if not new_results.get(key):
+                    new_results[key] = []
 
-            new_results[key].append({
-                'package_name': vulnerability.get('PkgName'),
-                'package_version': vulnerability.get('InstalledVersion'),
-                'name': vulnerability.get('VulnerabilityID'),
-                'fix': vulnerability.get('FixedVersion'),
-                'url':  vulnerability.get('References'),
-                'severity': vulnerability.get('Severity')
-            })
+                new_results[key].append({
+                    'package_name': vulnerability.get('PkgName'),
+                    'package_version': vulnerability.get('InstalledVersion'),
+                    'name': vulnerability.get('VulnerabilityID'),
+                    'fix': vulnerability.get('FixedVersion'),
+                    'url':  vulnerability.get('References'),
+                    'severity': vulnerability.get('Severity')
+                })
 
     return new_results
