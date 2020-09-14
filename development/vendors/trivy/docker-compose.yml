@@ -7,7 +7,7 @@ services:
     ports:
       - "8080"
     networks:
-        - ccvs-scanning-api_ccvs_net
+      - development_ccvs_net
 
   trivy-wrapper:
     image: williamhillonline/trivy-wrapper-api:feature-feature_first-version
@@ -19,10 +19,10 @@ services:
     ports:
       - "8080:8080"
     networks:
-        - ccvs-scanning-api_ccvs_net
+      - development_ccvs_net
     depends_on:
-        - trivy-server
+      - trivy-server
 
 networks:
-  ccvs-scanning-api_ccvs_net:
+  development_ccvs_net:
     external: true

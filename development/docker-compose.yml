@@ -14,6 +14,7 @@ services:
         external_links:
             - anchore_engine
             - clair_clair
+            - trivy_wrapper
         networks:
             - ccvs_net
         ports:
@@ -35,6 +36,7 @@ services:
         external_links:
             - anchore_engine
             - clair_clair
+            - trivy_wrapper
         networks:
             - ccvs_net
         volumes:
