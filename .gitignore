@@ -1,7 +1,5 @@
 *.code-workspace
 
-*.env
-
 *.vscode
 
 .coverage
