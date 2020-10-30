@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: password
     image: postgres:latest
     networks:
-      - ccvs-scanning-api_ccvs_net
+      - development_ccvs_net
     restart: unless-stopped
 
   clair:
@@ -16,7 +16,7 @@ services:
       - postgres
     image: quay.io/coreos/clair-git:latest
     networks:
-      - ccvs-scanning-api_ccvs_net
+      - development_ccvs_net
     ports:
       - "6060:6060"
       - "6061:6061"
@@ -27,5 +27,5 @@ services:
 
 
 networks:
-  ccvs-scanning-api_ccvs_net:
+  development_ccvs_net:
     external: true

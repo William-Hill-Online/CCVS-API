@@ -47,6 +47,8 @@ run-docker-vendors: ## Run docker(vendors)
 	docker-compose --file development/vendors/anchore-engine/docker-compose.yml up -d --build
 	echo "Running docker vendor clair"
 	docker-compose --file development/vendors/clair/docker-compose.yml up -d --build
+	echo "Running docker vendor trivy"
+	docker-compose --file development/vendors/trivy/docker-compose.yml up -d --build
 
 run-celery: install ## Run celery
 	echo "Running celery"

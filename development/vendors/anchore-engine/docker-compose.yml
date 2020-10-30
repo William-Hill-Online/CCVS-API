@@ -10,7 +10,7 @@ services:
       - "8228:8228"
       - "8338:8338"
     networks:
-      - ccvs_ccvs_net
+      - development_ccvs_net
     volumes:
       - ./config/config.yaml:/config/config.yaml
     logging:
@@ -36,7 +36,7 @@ services:
       - POSTGRES_PASSWORD=mysecretpassword
       - PGDATA=/var/lib/postgresql/data/pgdata/
     networks:
-      - ccvs_ccvs_net
+      - development_ccvs_net
     logging:
       driver: "json-file"
       options:
@@ -46,5 +46,5 @@ volumes:
   postgresql_vol:
 
 networks:
-  ccvs_ccvs_net:
+  development_ccvs_net:
     external: true
