@@ -10,7 +10,7 @@ A central API to scan docker images using different vendors and centralizes all 
 ### How does it work?
 The main goal of this project is to help development teams improve the quality of their docker images by finding vulnerabilities and thus addressing them.
 
-CCVS can perform security analysis using Anchore[https://github.com/anchore/anchore-engine] and Clair[https://github.com/coreos/clair]
+CCVS can perform security analysis using Anchore[https://github.com/anchore/anchore-engine], Clair[https://github.com/coreos/clair], Trivy[https://github.com/aquasecurity/trivy]
 
 #### Why use different tools?
 There many tools to scan docker images, but sometimes the results can be diferent.
